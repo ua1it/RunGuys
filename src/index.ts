@@ -34,7 +34,7 @@ orbitControls.update();
 light()
 
 // FLOOR
-generateFloor()
+//generateFloor()
 
 // MODEL WITH ANIMATIONS
 var characterControls: CharacterControls
@@ -43,9 +43,7 @@ new GLTFLoader().load('models/FallGuys2.glb', function (gltf) {
     model.traverse(function (object: any) {
         if (object.isMesh) object.castShadow = true;
     });
-    // model.scale.set(1.2,1.2,100);
-    
-
+    model.rotation.z = 0.1;
     scene.add(model);
 
     const gltfAnimations: THREE.AnimationClip[] = gltf.animations;
@@ -57,6 +55,7 @@ new GLTFLoader().load('models/FallGuys2.glb', function (gltf) {
 
     characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera,  'idle')
 });
+
 
 // CONTROL KEYS
 const keysPressed = {  }
@@ -140,10 +139,10 @@ function wrapAndRepeatTexture (map: THREE.Texture) {
 function light() {
     scene.add(new THREE.AmbientLight(0xffffff, 0.7))
     const dirLight = new THREE.DirectionalLight(0xffffff, 1)
-    dirLight.position.set(- 60, 100, - 10);
+    dirLight.position.set(- 30, 90, 100);
     dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 50;
-    dirLight.shadow.camera.bottom = - 50;
+    dirLight.shadow.camera.top = 30;
+    dirLight.shadow.camera.bottom = 0;
     dirLight.shadow.camera.left = - 50;
     dirLight.shadow.camera.right = 50;
     dirLight.shadow.camera.near = 0.1;
