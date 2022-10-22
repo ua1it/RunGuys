@@ -34,7 +34,7 @@ orbitControls.update();
 light()
 
 // FLOOR
-//generateFloor()
+generateFloor()
 
 // MODEL WITH ANIMATIONS
 var characterControls: CharacterControls
@@ -137,18 +137,24 @@ function wrapAndRepeatTexture (map: THREE.Texture) {
 }
 
 function light() {
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7))
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1)
-    dirLight.position.set(- 30, 90, 100);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    
+    const plight = new THREE.PointLight(0xffffff, 1.5);
+    plight.position.set(0,3,5);
+    scene.add(plight);
+    
+    dirLight.position.set(0, 30, 50);
     dirLight.castShadow = true;
     dirLight.shadow.camera.top = 30;
     dirLight.shadow.camera.bottom = 0;
-    dirLight.shadow.camera.left = - 50;
+    dirLight.shadow.camera.left = - 30;
     dirLight.shadow.camera.right = 50;
     dirLight.shadow.camera.near = 0.1;
-    dirLight.shadow.camera.far = 200;
+    dirLight.shadow.camera.far = 100;
     dirLight.shadow.mapSize.width = 4096;
     dirLight.shadow.mapSize.height = 4096;
+    
     scene.add(dirLight);
     // scene.add( new THREE.CameraHelper(dirLight.shadow.camera))
 }
