@@ -65,9 +65,9 @@ document.addEventListener('keydown', (event) => {
     if (event.shiftKey && characterControls) {
         characterControls.switchRunToggle()
     } else {
-        // if(event.key == ' '){
-        //     alert('space')
-        // }
+        if(event.key == ' '){ // space
+            characterControls.switchJumpToggle()
+        }
         (keysPressed as any)[event.key.toLowerCase()] = true
     }
 }, false);
@@ -143,6 +143,10 @@ function light() {
     const plight = new THREE.PointLight(0xffffff, 1.5);
     plight.position.set(0,3,5);
     scene.add(plight);
+
+    const plight1 = new THREE.PointLight(0xffffff, 1);
+    plight1.position.set(0,-3,-50);
+    scene.add(plight1);
     
     dirLight.position.set(0, 30, 50);
     dirLight.castShadow = true;
