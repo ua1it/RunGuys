@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { A, D, DIRECTIONS, S, W } from './utils'
+import { A, D, DIRECTIONS, S, W, SPACE } from './utils'
 
 
 export class CharacterControls {
@@ -13,6 +13,7 @@ export class CharacterControls {
 
     // state
     toggleRun: boolean = true
+    toggleJump: boolean = false
     currentAction: string
     
     // temporary data
@@ -41,11 +42,18 @@ export class CharacterControls {
         })
         this.orbitControl = orbitControl
         this.camera = camera
-        this.updateCameraTarget(0,0)
+        this.updateCameraTarget(0,0,0)
     }
 
     public switchRunToggle() {
         this.toggleRun = !this.toggleRun
+    }
+    
+    public switchJumpToggle() {
+        this.toggleJump = true;
+        const timeout = setTimeout(()=>{
+            this.toggleJump = false;
+        },2000);
     }
 
     public update(delta: number, keysPressed: any) {
@@ -59,12 +67,17 @@ export class CharacterControls {
         // walking
         // jump
         var play = ''
-        if (directionPressed && this.toggleRun) {
+        if (directionPressed && this.toggleRun && !this.toggleJump) {
             play = 'running'
-        } else if (directionPressed) {
+        } else if (directionPressed && !this.toggleJump) {
             play = 'walking'
         } else {
-            play = 'idle'
+            if(this.toggleJump){
+                play = 'jump'
+            }
+            else{
+                play = 'idle'
+            }
         }
 
         if (this.currentAction != play) {
@@ -105,14 +118,46 @@ export class CharacterControls {
             const moveZ = this.walkDirection.z * velocity * delta
             this.model.position.x += moveX
             this.model.position.z += moveZ
-            this.updateCameraTarget(moveX, moveZ)
+            this.updateCameraTarget(moveX, moveZ,0)
+        }
+
+        if (this.currentAction == 'jump'){
+            // calculate towards camera direction
+            var angleYCameraDirection = Math.atan2(
+                (this.camera.position.x - this.model.position.x), 
+                (this.camera.position.z - this.model.position.z))
+            // diagonal movement angle offset
+            var directionOffset = this.directionOffset(keysPressed)
+
+            // rotate model
+            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset)
+            this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2)
+
+            // calculate direction
+            this.camera.getWorldDirection(this.walkDirection)
+            this.walkDirection.normalize()
+            this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset)
+
+            // run/walk velocity
+            const velocity = this.currentAction == 'jump' ? this.runVelocity : this.walkVelocity
+
+            // move model & camera
+            const moveX = this.walkDirection.x * velocity * delta
+            const moveZ = this.walkDirection.z * velocity * delta
+            const moveY = this.walkDirection.y * velocity * delta
+            this.model.position.x += moveX
+            this.model.position.z += moveZ
+            this.model.position.y -= moveY
+            this.updateCameraTarget(moveX, moveZ, moveY)
+
         }
     }
 
-    private updateCameraTarget(moveX: number, moveZ: number) {
+    private updateCameraTarget(moveX: number, moveZ: number, moveY: number) {
         // move camera
         this.camera.position.x += moveX
         this.camera.position.z += moveZ
+        this.camera.position.y += moveY
 
         // update camera target
         this.cameraTarget.x = this.model.position.x

@@ -43,9 +43,7 @@ new GLTFLoader().load('models/FallGuys2.glb', function (gltf) {
     model.traverse(function (object: any) {
         if (object.isMesh) object.castShadow = true;
     });
-    // model.scale.set(1.2,1.2,100);
-    
-
+    model.rotation.z = 0.1;
     scene.add(model);
 
     const gltfAnimations: THREE.AnimationClip[] = gltf.animations;
@@ -58,6 +56,7 @@ new GLTFLoader().load('models/FallGuys2.glb', function (gltf) {
     characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera,  'idle')
 });
 
+
 // CONTROL KEYS
 const keysPressed = {  }
 const keyDisplayQueue = new KeyDisplay();
@@ -66,9 +65,9 @@ document.addEventListener('keydown', (event) => {
     if (event.shiftKey && characterControls) {
         characterControls.switchRunToggle()
     } else {
-        // if(event.key == ' '){
-        //     alert('space')
-        // }
+        if(event.key == ' '){ // space
+            characterControls.switchJumpToggle()
+        }
         (keysPressed as any)[event.key.toLowerCase()] = true
     }
 }, false);
@@ -138,18 +137,28 @@ function wrapAndRepeatTexture (map: THREE.Texture) {
 }
 
 function light() {
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7))
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1)
-    dirLight.position.set(- 60, 100, - 10);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    
+    const plight = new THREE.PointLight(0xffffff, 1.5);
+    plight.position.set(0,3,5);
+    scene.add(plight);
+
+    const plight1 = new THREE.PointLight(0xffffff, 1);
+    plight1.position.set(0,-3,-50);
+    scene.add(plight1);
+    
+    dirLight.position.set(0, 30, 50);
     dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 50;
-    dirLight.shadow.camera.bottom = - 50;
-    dirLight.shadow.camera.left = - 50;
+    dirLight.shadow.camera.top = 30;
+    dirLight.shadow.camera.bottom = 0;
+    dirLight.shadow.camera.left = - 30;
     dirLight.shadow.camera.right = 50;
     dirLight.shadow.camera.near = 0.1;
-    dirLight.shadow.camera.far = 200;
+    dirLight.shadow.camera.far = 100;
     dirLight.shadow.mapSize.width = 4096;
     dirLight.shadow.mapSize.height = 4096;
+    
     scene.add(dirLight);
     // scene.add( new THREE.CameraHelper(dirLight.shadow.camera))
 }
