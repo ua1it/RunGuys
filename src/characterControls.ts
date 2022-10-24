@@ -25,7 +25,7 @@ export class CharacterControls {
     // constants
     fadeDuration: number = 0.2
     runVelocity = 5
-    walkVelocity = 3
+    walkVelocity = 2
 
     constructor(model: THREE.Group,
         mixer: THREE.AnimationMixer, animationsMap: Map<string, THREE.AnimationAction>,
@@ -101,7 +101,7 @@ export class CharacterControls {
             var directionOffset = this.directionOffset(keysPressed)
 
             // rotate model
-            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, directionOffset)
+            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset)
             this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2)
 
             // calculate direction
@@ -130,7 +130,7 @@ export class CharacterControls {
             var directionOffset = this.directionOffset(keysPressed)
 
             // rotate model
-            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, directionOffset)//angleYCameraDirection
+            this.rotateQuarternion.setFromAxisAngle(this.rotateAngle, angleYCameraDirection + directionOffset)
             this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2)
 
             // calculate direction
@@ -154,19 +154,14 @@ export class CharacterControls {
     }
 
     private updateCameraTarget(moveX: number, moveZ: number, moveY: number) {
-        // // move camera
-        // this.camera.position.x += moveX
-        // this.camera.position.z += moveZ
-        // this.camera.position.y += moveY
-
         // move camera
-        this.camera.position.x = this.camera.position.x + moveX
-        this.camera.position.z = this.camera.position.z + moveZ -10
-        this.camera.position.y = this.camera.position.y + moveY + 5
+        this.camera.position.x += moveX
+        this.camera.position.z += moveZ
+        this.camera.position.y += moveY
 
         // update camera target
         this.cameraTarget.x = this.model.position.x
-        this.cameraTarget.y = this.model.position.y
+        this.cameraTarget.y = this.model.position.y + 1
         this.cameraTarget.z = this.model.position.z
         this.orbitControl.target = this.cameraTarget
     }
