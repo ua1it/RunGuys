@@ -77,7 +77,7 @@ function (gltf) {
 const gltfLoader = new GLTFLoader()
 
 gltfLoader.load(
-    'models/untitled.gltf',
+    'models/untitled.gl',
     (gltf) =>
     {
         console.log('success')
