@@ -34,7 +34,7 @@ orbitControls.update();
 light()
 
 // FLOOR
-generateFloor()
+//generateFloor()
 
 // MODEL WITH ANIMATIONS
 var characterControls: CharacterControls
@@ -55,6 +55,46 @@ new GLTFLoader().load('models/FallGuys2.glb', function (gltf) {
 
     characterControls = new CharacterControls(model, mixer, animationsMap, orbitControls, camera,  'idle')
 });
+
+/* new GLTFLoader().load('models/scene.gltf', 
+function (gltf) {
+    const scene = gltf.scene;
+    scene.add(scene);
+},
+    function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
+); */
+
+const gltfLoader = new GLTFLoader()
+
+gltfLoader.load(
+    'models/untitled.gltf',
+    (gltf) =>
+    {
+        console.log('success')
+        console.log(gltf)
+        scene.add(gltf.scene);
+    },
+    function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+    (error) =>
+    {
+        console.log('error')
+        console.log(error)
+    }
+)
 
 
 // CONTROL KEYS
