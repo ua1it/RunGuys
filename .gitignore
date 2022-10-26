@@ -16,5 +16,4 @@ ehthumbs.db
 Thumbs.db
 
 index.js
-/models/untitled.glb
-/models/scene.bin
+src/models/untitled.glb
