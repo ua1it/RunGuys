@@ -22,7 +22,7 @@ export class CharacterControls {
 
   // constants
   fadeDuration: number = 0.2;
-  runVelocity = 5;
+  runVelocity = 10;
   walkVelocity = 3;
 
   constructor(
@@ -44,7 +44,7 @@ export class CharacterControls {
     });
     this.orbitControl = orbitControl;
     this.camera = camera;
-    this.updateCameraTarget(0, 0, 0);
+    this.updateCameraTarget(0, 0, 0, "none");
   }
 
   public switchRunToggle() {
@@ -55,8 +55,9 @@ export class CharacterControls {
     this.toggleJump = true;
     const timeout = setTimeout(() => {
       this.toggleJump = false;
-    }, 2000);
+    }, 1000);
   }
+
 
   public update(delta: number, keysPressed: any) {
     const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);
@@ -91,7 +92,7 @@ export class CharacterControls {
       this.currentAction = play;
     }
 
-    this.mixer.update(delta);
+    this.mixer.update(delta * 1.4);
 
     if (this.currentAction == "running" || this.currentAction == "walking") {
       // calculate towards camera direction
@@ -116,41 +117,27 @@ export class CharacterControls {
       this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
 
       // run/walk velocity
-      const velocity =
-        this.currentAction == "running" ? this.runVelocity : this.walkVelocity;
+      const velocity = this.runVelocity;
 
       // move model & camera
       const moveX = this.walkDirection.x * velocity * delta;
       const moveZ = this.walkDirection.z * velocity * delta;
       this.model.position.x += moveX;
       this.model.position.z += moveZ;
-      this.updateCameraTarget(moveX, moveZ, 0);
+      this.updateCameraTarget(moveX, moveZ, 0, this.currentAction);
     }
 
     if (this.currentAction == "jump") {
-      // calculate towards camera direction
-      var angleYCameraDirection = Math.atan2(
-        this.camera.position.x - this.model.position.x,
-        this.camera.position.z - this.model.position.z
-      );
+      this.mixer.update(delta * 1.4);
       // diagonal movement angle offset
       var directionOffset = this.directionOffset(keysPressed);
-
-      // rotate model
-      this.rotateQuarternion.setFromAxisAngle(
-        this.rotateAngle,
-        directionOffset
-      ); //angleYCameraDirection
-      this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
 
       // calculate direction
       this.camera.getWorldDirection(this.walkDirection);
       this.walkDirection.normalize();
       this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
 
-      // run/walk velocity
-      const velocity =
-        this.currentAction == "jump" ? this.runVelocity : this.walkVelocity;
+      const velocity = this.runVelocity;
 
       // move model & camera
       const moveX = this.walkDirection.x * velocity * delta;
@@ -159,26 +146,40 @@ export class CharacterControls {
       this.model.position.x += moveX;
       this.model.position.z += moveZ;
       this.model.position.y -= moveY;
-      this.updateCameraTarget(moveX, moveZ, moveY);
+
+      this.updateCameraTarget(moveX, moveZ, moveY, this.currentAction);
     }
+    
   }
 
-  private updateCameraTarget(moveX: number, moveZ: number, moveY: number) {
+  private updateCameraTarget(moveX: number, moveZ: number, moveY: number, Action: String) {
     // // move camera
     // this.camera.position.x += moveX
     // this.camera.position.z += moveZ
     // this.camera.position.y += moveY
 
-    // move camera
-    this.camera.position.x = this.camera.position.x + moveX;
-    this.camera.position.z = this.camera.position.z + moveZ - 10;
-    this.camera.position.y = this.camera.position.y + moveY + 5;
+    if(Action == "running" || Action == "walking"){
+      // move camera
+      this.camera.position.x = this.camera.position.x + moveX;
+      this.camera.position.z = this.camera.position.z + moveZ - 10;
 
-    // update camera target
-    this.cameraTarget.x = this.model.position.x;
-    this.cameraTarget.y = this.model.position.y;
-    this.cameraTarget.z = this.model.position.z;
-    this.orbitControl.target = this.cameraTarget;
+      // update camera target
+      this.cameraTarget.x = this.model.position.x;
+      this.cameraTarget.z = this.model.position.z;
+      this.orbitControl.target = this.cameraTarget;
+    }else if(Action == "jump"){
+      // move camera
+      this.camera.position.x = this.camera.position.x + moveX;
+      this.camera.position.z = this.camera.position.z + moveZ - 10;
+      this.camera.position.y = this.camera.position.y + moveY + 5;
+
+      // update camera target
+      this.cameraTarget.x = this.model.position.x;
+      this.cameraTarget.y = this.model.position.y;
+      this.cameraTarget.z = this.model.position.z;
+      this.orbitControl.target = this.cameraTarget;
+    }
+
   }
 
   private directionOffset(keysPressed: any) {

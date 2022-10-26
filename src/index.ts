@@ -147,7 +147,7 @@ const clock = new THREE.Clock();
 //let delta = clock.getDelta();
 // ANIMATE
 function animate() {
-  let delta = clock.getDelta() * 2;
+  let delta = clock.getDelta() * 1.4;
   if (characterControls) {
     characterControls.update(delta, keysPressed);
   }
@@ -229,8 +229,8 @@ function light() {
   plight.position.set(0, 3, 5);
   scene.add(plight);
 
-  const plight1 = new THREE.PointLight(0xffffff, 1);
-  plight1.position.set(0, -3, -50);
+  const plight1 = new THREE.PointLight(0xffffff, 2);
+  plight1.position.set(0, -3, -10);
   scene.add(plight1);
 
   dirLight.position.set(0, 30, 50);
