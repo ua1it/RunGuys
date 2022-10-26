@@ -147,6 +147,11 @@ export class CharacterControls {
       this.model.position.z += moveZ;
       this.model.position.y -= moveY;
 
+      const timeout = setTimeout(()=>{
+        this.model.position.x += moveX*0.5;
+        this.model.position.z += moveZ*0.5;
+        this.model.position.y += moveY;
+      },700);
       this.updateCameraTarget(moveX, moveZ, moveY, this.currentAction);
     }
     
@@ -161,7 +166,7 @@ export class CharacterControls {
     if(Action == "running" || Action == "walking"){
       // move camera
       this.camera.position.x = this.camera.position.x + moveX;
-      this.camera.position.z = this.camera.position.z + moveZ - 10;
+      this.camera.position.z = this.camera.position.z + moveZ;
 
       // update camera target
       this.cameraTarget.x = this.model.position.x;
@@ -170,8 +175,8 @@ export class CharacterControls {
     }else if(Action == "jump"){
       // move camera
       this.camera.position.x = this.camera.position.x + moveX;
-      this.camera.position.z = this.camera.position.z + moveZ - 10;
-      this.camera.position.y = this.camera.position.y + moveY + 5;
+      this.camera.position.z = this.camera.position.z + moveZ;
+      this.camera.position.y = this.camera.position.y + moveY;
 
       // update camera target
       this.cameraTarget.x = this.model.position.x;

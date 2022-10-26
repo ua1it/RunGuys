@@ -16,8 +16,8 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.y = 5;
-camera.position.z = -10;
+camera.position.y = 7;
+camera.position.z = -20;
 camera.position.x = 0;
 
 // RENDERER
