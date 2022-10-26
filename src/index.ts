@@ -88,13 +88,9 @@ function (gltf) {
 	}
 ); */
 
+//Map
 const gltfLoader = new GLTFLoader();
 let mixer: THREE.AnimationMixer;
-
-// let modelReady = false;
-// const animationActions: THREE.AnimationAction[] = [];
-// let activeAction: THREE.AnimationAction;
-// let lastAction: THREE.AnimationAction;
 
 gltfLoader.load(
   "models/untitled.glb",
