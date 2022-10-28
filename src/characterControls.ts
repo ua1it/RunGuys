@@ -24,6 +24,7 @@ export class CharacterControls {
   fadeDuration: number = 0.2;
   runVelocity = 10;
   walkVelocity = 3;
+  jumpTime = 0;
 
   constructor(
     model: THREE.Group,
@@ -44,7 +45,7 @@ export class CharacterControls {
     });
     this.orbitControl = orbitControl;
     this.camera = camera;
-    this.updateCameraTarget(0, 0, 0, "none");
+    this.updateCameraTarget(0, 0, "none");
   }
 
   public switchRunToggle() {
@@ -53,7 +54,7 @@ export class CharacterControls {
 
   public switchJumpToggle() {
     this.toggleJump = true;
-    const timeout = setTimeout(() => {
+    const jumpTimeout = setTimeout(() => {
       this.toggleJump = false;
     }, 1000);
   }
@@ -124,7 +125,7 @@ export class CharacterControls {
       const moveZ = this.walkDirection.z * velocity * delta;
       this.model.position.x += moveX;
       this.model.position.z += moveZ;
-      this.updateCameraTarget(moveX, moveZ, 0, this.currentAction);
+      this.updateCameraTarget(moveX, moveZ, this.currentAction);
     }
 
     if (this.currentAction == "jump") {
@@ -142,22 +143,23 @@ export class CharacterControls {
       // move model & camera
       const moveX = this.walkDirection.x * velocity * delta;
       const moveZ = this.walkDirection.z * velocity * delta;
-      const moveY = this.walkDirection.y * velocity * delta;
-      this.model.position.x += moveX;
-      this.model.position.z += moveZ;
-      this.model.position.y -= moveY;
 
-      const timeout = setTimeout(()=>{
-        this.model.position.x += moveX*0.5;
-        this.model.position.z += moveZ*0.5;
-        this.model.position.y += moveY;
-      },700);
-      this.updateCameraTarget(moveX, moveZ, moveY, this.currentAction);
+      if(this.jumpTime >= 30){
+        this.model.position.y -= 0.08;
+        this.jumpTime += 1;
+        if(this.jumpTime == 60) this.jumpTime = 0;
+      }else{
+        this.model.position.x += moveX;
+        this.model.position.z += moveZ;
+        this.model.position.y += 0.08;
+        this.jumpTime += 1;
+      }
+      // console.log("jumpTime: "+this.jumpTime);
+      this.updateCameraTarget(moveX, moveZ, this.currentAction);
     }
-    
   }
 
-  private updateCameraTarget(moveX: number, moveZ: number, moveY: number, Action: String) {
+  private updateCameraTarget(moveX: number, moveZ: number, Action: String) {
     // // move camera
     // this.camera.position.x += moveX
     // this.camera.position.z += moveZ
@@ -174,15 +176,18 @@ export class CharacterControls {
       this.orbitControl.target = this.cameraTarget;
     }else if(Action == "jump"){
       // move camera
-      this.camera.position.x = this.camera.position.x + moveX;
-      this.camera.position.z = this.camera.position.z + moveZ;
-      this.camera.position.y = this.camera.position.y + moveY;
-
-      // update camera target
+      if(this.jumpTime >= 20){
+        this.camera.position.y = this.camera.position.y + 0.08;
+      }else{
+        this.camera.position.x = this.camera.position.x + moveX;
+        this.camera.position.z = this.camera.position.z + moveZ;
+        this.camera.position.y = this.camera.position.y - 0.08;
+      }
       this.cameraTarget.x = this.model.position.x;
-      this.cameraTarget.y = this.model.position.y;
       this.cameraTarget.z = this.model.position.z;
+      this.cameraTarget.y = this.model.position.y;
       this.orbitControl.target = this.cameraTarget;
+      // update camera target
     }
 
   }
