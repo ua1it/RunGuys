@@ -53,6 +53,7 @@ export class CharacterControls {
   }
 
   public switchJumpToggle() {
+    this.jumpTime = 0;
     this.toggleJump = true;
     const jumpTimeout = setTimeout(() => {
       this.toggleJump = false;
