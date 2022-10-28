@@ -146,15 +146,16 @@ export class CharacterControls {
       this.model.position.x += moveX;
       this.model.position.z += moveZ;
       this.model.position.y -= moveY;
-
-      const timeout = setTimeout(()=>{
-        this.model.position.x += moveX*0.5;
-        this.model.position.z += moveZ*0.5;
-        this.model.position.y += moveY;
-      },700);
+      this.goingDown(moveX,moveY,moveZ);
       this.updateCameraTarget(moveX, moveZ, moveY, this.currentAction);
     }
-    
+  }
+  public goingDown(moveX: number, moveY: number, moveZ: number){
+    const timeout = setTimeout(()=>{
+      this.model.position.x += moveX*0.5;
+      this.model.position.z += moveZ*0.5;
+      this.model.position.y += moveY;
+    },500);
   }
 
   private updateCameraTarget(moveX: number, moveZ: number, moveY: number, Action: String) {
@@ -176,11 +177,9 @@ export class CharacterControls {
       // move camera
       this.camera.position.x = this.camera.position.x + moveX;
       this.camera.position.z = this.camera.position.z + moveZ;
-      this.camera.position.y = this.camera.position.y + moveY;
 
       // update camera target
       this.cameraTarget.x = this.model.position.x;
-      this.cameraTarget.y = this.model.position.y;
       this.cameraTarget.z = this.model.position.z;
       this.orbitControl.target = this.cameraTarget;
     }
