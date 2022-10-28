@@ -2,14 +2,56 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>three.js example</title>
+    <title>RunGuys</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/modernizr.js" type="text/javascript"></script>
     <style>
       body {
         margin: 0px;
       }
+      #loading{
+        height: 150vw;
+      }
     </style>
+        <script>
+          $(document).ready(function() {
+            if(!Modernizr.meter){
+              alert('Sorry your brower does not support HTML5 progress bar');
+            } else {
+              var progressbar = $('#progressbar'),
+                max = progressbar.attr('max'),
+                time = (1000/max)*5,	
+                    value = progressbar.val();
+
+                var loading = function() {
+                    value += 0.7;
+                    addValue = progressbar.val(value.toFixed());
+                    
+                    $('.progress-value').html(value.toFixed(0) + '%');
+                    if (value >= max) {
+                        clearInterval(animate);    
+                        document.getElementById("loading").style.display ="none";
+                    }
+                };
+                var animate = setInterval(function() {
+                    loading();
+                }, time);
+            };
+          });
+          // window.onbeforeunload = function(){$('#loading').show();}
+        </script>
   </head>
   <body>
-    <script src="index.js"></script>
+      <div id = "loading" class="demo-wrapper html5-progress-bar">
+        <h1 id = "titleText">Welcome To RunGuys!</h1><br><hr id ="titleHr"><br>
+        <div class="progress-bar-wrapper">
+          <progress id="progressbar" value="0" max="100"></progress>
+          <span class="progress-value">0%</span>          
+        </div>
+      </div>
+      <script src = "index.js">
+      </script>
   </body>
 </html>
