@@ -96,6 +96,10 @@ export class CharacterControls {
     this.mixer.update(delta * 1.4);
 
     if (this.currentAction == "running" || this.currentAction == "walking") {
+      if(this.model.position.y >= 0.08){
+        this.model.position.y -= 0.02;
+      }
+
       // calculate towards camera direction
       var angleYCameraDirection = Math.atan2(
         this.camera.position.x - this.model.position.x,
@@ -145,16 +149,22 @@ export class CharacterControls {
       const moveZ = this.walkDirection.z * velocity * delta;
 
       if(this.jumpTime >= 30){
-        this.model.position.y -= 0.08;
+        this.model.position.x += moveX;
+        this.model.position.z += moveZ;
+        this.model.position.y -= 0.092;
         this.jumpTime += 1;
-        if(this.jumpTime == 60) this.jumpTime = 0;
+        if(this.jumpTime == 60) {
+          this.jumpTime = 0;
+          this.model.position.y = 0.08;
+          }
       }else{
         this.model.position.x += moveX;
         this.model.position.z += moveZ;
-        this.model.position.y += 0.08;
+        this.model.position.y += 0.085;
         this.jumpTime += 1;
       }
       // console.log("jumpTime: "+this.jumpTime);
+      // console.log(this.model.position.y);
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
     }
   }
