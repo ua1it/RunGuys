@@ -12,6 +12,7 @@ export class CharacterControls {
   // state
   toggleRun: boolean = true;
   toggleJump: boolean = false;
+  toggleBack: boolean = false;
   currentAction: string;
 
   // temporary data
@@ -25,6 +26,7 @@ export class CharacterControls {
   runVelocity = 10;
   walkVelocity = 3;
   jumpTime = 0;
+  backTime = 0;
 
   constructor(
     model: THREE.Group,
@@ -59,7 +61,13 @@ export class CharacterControls {
       this.toggleJump = false;
     }, 1000);
   }
-
+  public switchBackToggle() {
+    this.backTime = 0;
+    this.toggleBack = true;
+    const jumpBackout = setTimeout(() => {
+      this.toggleBack = false;
+    }, 1000);
+  }
 
   public update(delta: number, keysPressed: any) {
     const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);
@@ -72,7 +80,11 @@ export class CharacterControls {
     // walking
     // jump
     var play = "";
-    if (directionPressed && this.toggleRun && !this.toggleJump) {
+    if(this.toggleBack){
+        console.log(this.toggleBack)
+        play = "backward"
+    }
+    else if (directionPressed && this.toggleRun && !this.toggleJump) {
       play = "running";
     } else if (directionPressed && !this.toggleJump) {
       play = "walking";
@@ -168,6 +180,31 @@ export class CharacterControls {
       // console.log(this.model.position.y);
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
     }
+
+    if (this.currentAction == "backward") {
+        this.mixer.update(delta * 0.5);
+        // diagonal movement angle offset
+        var directionOffset = this.directionOffset(keysPressed);
+  
+        // calculate direction
+        this.camera.getWorldDirection(this.walkDirection);
+        this.walkDirection.normalize();
+        this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+  
+        const velocity = this.runVelocity;
+  
+        // move model & camera
+        const moveX = this.walkDirection.x * velocity * delta*0.5;
+        const moveZ = this.walkDirection.z * velocity * delta*0.5;
+  
+        
+          this.model.position.x -= moveX;
+          this.model.position.z -= moveZ;
+        
+        // console.log("jumpTime: "+this.jumpTime);
+        // console.log(this.model.position.y);
+        this.updateCameraTarget(moveX, moveZ, this.currentAction);
+      }
   }
 
   private updateCameraTarget(moveX: number, moveZ: number, Action: String) {
@@ -200,7 +237,18 @@ export class CharacterControls {
       this.orbitControl.target = this.cameraTarget;
       // update camera target
     }
+    else if(Action == "backward"){
+        
+          this.camera.position.x = this.camera.position.x - moveX;
+          this.camera.position.z = this.camera.position.z - moveZ;
+          
 
+        this.cameraTarget.x = this.model.position.x;
+        this.cameraTarget.z = this.model.position.z;
+        this.cameraTarget.y = this.model.position.y;
+        this.orbitControl.target = this.cameraTarget;
+        // update camera target
+      }
   }
 
   private directionOffset(keysPressed: any) {

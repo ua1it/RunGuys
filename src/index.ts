@@ -197,6 +197,10 @@ document.addEventListener(
         // space
         characterControls.switchJumpToggle();
       }
+      else if (event.key == "n") {
+        // space
+        characterControls.switchBackToggle();
+      }
       (keysPressed as any)[event.key.toLowerCase()] = true;
     }
   },
