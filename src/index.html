@@ -22,17 +22,18 @@
             } else {
               var progressbar = $('#progressbar'),
                 max = progressbar.attr('max'),
-                time = (1000/max)*5,	
+                time = (1000/max)*2,	
                     value = progressbar.val();
 
                 var loading = function() {
-                    value += 0.7;
+                    value += 0.25;
                     addValue = progressbar.val(value.toFixed());
                     
                     $('.progress-value').html(value.toFixed(0) + '%');
                     if (value >= max) {
                         clearInterval(animate);    
                         document.getElementById("loading").style.display ="none";
+                        document.getElementById("youWIN").style.display = "block";
                     }
                 };
                 var animate = setInterval(function() {
@@ -51,7 +52,10 @@
           <span class="progress-value">0%</span>          
         </div>
       </div>
-      <script src = "index.js">
-      </script>
+      <div id = "youWIN">
+        <h1 id = "youWinText">You Win!!</h1>
+        <script src = "index.js">
+        </script>
+      </div>
   </body>
 </html>
