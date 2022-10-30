@@ -139,6 +139,17 @@ export class CharacterControls {
       this.model.position.x += moveX;
       this.model.position.z += moveZ;
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
+      let testButton = document.getElementById('testButton') as HTMLElement;
+      console.log('button: '+ JSON.stringify(testButton));
+      testButton.addEventListener("click", () => {
+        alert("clicked!");
+      });
+      if(this.model.position.z >= 210.5){
+        alert("GAME IS OVER");
+      }
+      console.log('x: '+ this.model.position.x);
+      console.log('z: '+ this.model.position.z);
+
     }
 
     if (this.currentAction == "jump") {
