@@ -144,13 +144,16 @@ export class CharacterControls {
       this.model.position.z += moveZ;
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
 
-      let testButton = document.getElementById('testButton') as HTMLElement;
-      console.log('button: '+ JSON.stringify(testButton));
-      testButton.addEventListener("click", () => {
-        alert("clicked!");
-      });
-      if(this.model.position.z >= 210.5){
-        alert("GAME IS OVER");
+      // let testButton = document.getElementById('testButton') as HTMLElement;
+      // console.log('button: '+ JSON.stringify(testButton));
+      // testButton.addEventListener("click", () => {
+      //   alert("clicked!");
+      // });
+
+      // z가 210보다 높고 x가 -8.4부터 8.4사이가 결승선
+      if(this.model.position.z >= 210.5 && (this.model.position.x <= 8.4 && this.model.position.x >= -8.4)){
+        document.getElementById("youWIN").style.display = "block";
+        // alert("GAME IS OVER");
       }
       console.log('x: '+ this.model.position.x);
       console.log('z: '+ this.model.position.z);

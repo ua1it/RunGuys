@@ -90,7 +90,7 @@ const gltfLoader = new GLTFLoader();
 let mixer: THREE.AnimationMixer;
 
 gltfLoader.load(
-  "models/wallTest.glb",
+  "models/untitled.glb",
   (gltf) => {
     console.log("success");
     console.log(gltf);
