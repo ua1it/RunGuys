@@ -303,16 +303,20 @@ function light() {
   plight1.position.set(0, -3, -10);
   scene.add(plight1);
 
-  dirLight.position.set(0, 30, 50);
-  dirLight.castShadow = true;
-  dirLight.shadow.camera.top = 30;
-  dirLight.shadow.camera.bottom = 0;
-  dirLight.shadow.camera.left = -30;
-  dirLight.shadow.camera.right = 50;
-  dirLight.shadow.camera.near = 0.1;
-  dirLight.shadow.camera.far = 100;
-  dirLight.shadow.mapSize.width = 4096;
-  dirLight.shadow.mapSize.height = 4096;
+  const plight2 = new THREE.PointLight(0xffffff, 2);
+  plight1.position.set(0, 7, -20);
+  scene.add(plight2);
+
+  dirLight.position.set(0, 100, 100);
+  // dirLight.castShadow = true;
+  // dirLight.shadow.camera.top = 30;
+  // dirLight.shadow.camera.bottom = 0;
+  // dirLight.shadow.camera.left = -30;
+  // dirLight.shadow.camera.right = 50;
+  // dirLight.shadow.camera.near = 0.1;
+  // dirLight.shadow.camera.far = 100;
+  // dirLight.shadow.mapSize.width = 4096;
+  // dirLight.shadow.mapSize.height = 4096;
 
   scene.add(dirLight);
 
