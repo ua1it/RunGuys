@@ -1,10 +1,12 @@
 import * as THREE from "three";
 import { A, D, DIRECTIONS, S, W, SPACE } from "./utils";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 export class CharacterControls {
   model: THREE.Group;
   mixer: THREE.AnimationMixer;
   animationsMap: Map<string, THREE.AnimationAction> = new Map(); // walking, Run, Idle
+  orbitControl: OrbitControls;
   camera: THREE.Camera;
 
   // state
@@ -30,6 +32,7 @@ export class CharacterControls {
     model: THREE.Group,
     mixer: THREE.AnimationMixer,
     animationsMap: Map<string, THREE.AnimationAction>,
+    orbitControl: OrbitControls,
     camera: THREE.Camera,
     currentAction: string
   ) {
@@ -42,6 +45,8 @@ export class CharacterControls {
         value.play();
       }
     });
+
+    this.orbitControl = orbitControl;
     this.camera = camera;
     this.updateCameraTarget(0, 0, "none");
   }
@@ -217,6 +222,7 @@ export class CharacterControls {
       // update camera target
       this.cameraTarget.x = this.model.position.x;
       this.cameraTarget.z = this.model.position.z;
+      this.orbitControl.target = this.cameraTarget;
     }else if(Action == "jump"){
       // move camera
       if(this.jumpTime >= 20){
@@ -229,6 +235,7 @@ export class CharacterControls {
       this.cameraTarget.x = this.model.position.x;
       this.cameraTarget.z = this.model.position.z;
       this.cameraTarget.y = this.model.position.y;
+      
       // update camera target
     }
     else if(Action == "backward"){
@@ -240,6 +247,8 @@ export class CharacterControls {
         this.cameraTarget.x = this.model.position.x;
         this.cameraTarget.z = this.model.position.z;
         this.cameraTarget.y = this.model.position.y;
+
+       this.orbitControl.target = this.cameraTarget;
         // update camera target
       }
   }

@@ -3,7 +3,7 @@ import { CharacterControls } from "./characterControls";
 import * as THREE from "three";
 import { CameraHelper } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // SCENE
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xa8def0);
@@ -16,15 +16,22 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 camera.position.y = 7;
-camera.position.z = -10;
+camera.position.z = -15;
 camera.position.x = 0;
-camera.lookAt( 0,0,0 );
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
+
+const orbitControls = new OrbitControls(camera, renderer.domElement);
+ orbitControls.enableDamping = true;
+ orbitControls.minDistance = 5;
+ orbitControls.maxDistance = 15;
+ orbitControls.enablePan = false;
+ orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
+ orbitControls.update();
 
 // LIGHTS
 light();
@@ -55,6 +62,7 @@ new GLTFLoader().load("models/FallGuys2.glb", function (gltf) {
     model,
     mixer,
     animationsMap,
+    orbitControls,
     camera,
     "idle"
   );
@@ -213,6 +221,7 @@ function animate() {
   if (characterControls) {
     characterControls.update(delta, keysPressed);
   }
+  orbitControls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
