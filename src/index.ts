@@ -33,7 +33,6 @@ orbitControls.enablePan = false;
 orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
 orbitControls.update();
 
-
 // LIGHTS
 light();
 // FLOOR
@@ -91,7 +90,7 @@ const gltfLoader = new GLTFLoader();
 let mixer: THREE.AnimationMixer;
 
 gltfLoader.load(
-  "models/untitled.glb",
+  "models/wallTest.glb",
   (gltf) => {
     console.log("success");
     console.log(gltf);
@@ -103,6 +102,18 @@ gltfLoader.load(
     gltf.animations.forEach((clip) => {
       mixer.clipAction(clip).play();
     });
+
+    let Cube = gltf.scene.children[5];
+    let Cube002 = gltf.scene.children[6];
+    let Cube003 = gltf.scene.children[7];
+
+    console.log("Position");
+    console.log(Cube.getWorldPosition(Cube.position));
+    //Vector3 {x: 22.379180908203125, y: 0.33713316917419434, z: 11.690906524658203}
+    console.log(Cube002.getWorldPosition(Cube002.position));
+    //Vector3 {x: -22.561954498291016, y: -0.2211005687713623, z: 11.767125129699707}
+    console.log(Cube003.getWorldPosition(Cube003.position));
+    //Vector3 {x: 0.8326816558837891, y: -2.900982618331909, z: -7.809866428375244}
   },
   function (xhr) {
     console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -117,16 +128,16 @@ gltfLoader.load(
 //let obstacleType: string[] = ['hammerCol', 'hammerRow', 'hammerThorn', 'plate', 'crown'];
 
 const mainLoader = async () => {
-  const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] = await Promise.all([
-    gltfLoader.loadAsync('./models/hammer_1.glb'),
-    gltfLoader.loadAsync('./models/hammer_2.glb'),
-    gltfLoader.loadAsync('./models/hammer_3.glb'),
-    gltfLoader.loadAsync('./models/obstacle.glb'),
-    gltfLoader.loadAsync('./models/crown.glb'),
-    gltfLoader.loadAsync('./models/entrance.glb'),
-    gltfLoader.loadAsync('./models/hammer_2.glb'),
-
-  ]);
+  const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] =
+    await Promise.all([
+      gltfLoader.loadAsync("./models/hammer_1.glb"),
+      gltfLoader.loadAsync("./models/hammer_2.glb"),
+      gltfLoader.loadAsync("./models/hammer_3.glb"),
+      gltfLoader.loadAsync("./models/obstacle.glb"),
+      gltfLoader.loadAsync("./models/crown.glb"),
+      gltfLoader.loadAsync("./models/entrance.glb"),
+      gltfLoader.loadAsync("./models/hammer_2.glb"),
+    ]);
 
   scene.add(hammer_1.scene);
   let clock = new THREE.Clock();
@@ -140,7 +151,6 @@ const mainLoader = async () => {
   scene.add(entrance.scene);
   scene.add(hammer_4.scene);
 
-
   hammer_1.scene.position.set(0, 1.5, 0);
   hammer_1.scene.scale.set(4, 4, 4);
 
@@ -150,7 +160,6 @@ const mainLoader = async () => {
   hammer_3.scene.position.set(0, 10, 20);
   hammer_3.scene.scale.set(0.003, 0.003, 0.003);
   console.log(hammer_2.animations);
-
 
   obstacle.scene.position.set(-10, 0.78, 0);
   obstacle.scene.scale.set(0.005, 0.005, 0.005);
@@ -194,8 +203,7 @@ document.addEventListener(
       if (event.key == " ") {
         // space
         characterControls.switchJumpToggle();
-      }
-      else if (event.key == "n") {
+      } else if (event.key == "n") {
         // space
         characterControls.switchBackToggle();
       }
@@ -326,9 +334,12 @@ function light() {
 
 function sky() {
   const geometry2 = new THREE.SphereGeometry(500, 32, 16);
-  const texture2 = new THREE.TextureLoader().load('./textures/sky/sky3.webp'); //loads the picture on the spherical geometry
+  const texture2 = new THREE.TextureLoader().load("./textures/sky/sky3.webp"); //loads the picture on the spherical geometry
 
-  const material2 = new THREE.MeshBasicMaterial({ map: texture2 ,side : THREE.BackSide}); //pastes the picture on the spherical geometry.
+  const material2 = new THREE.MeshBasicMaterial({
+    map: texture2,
+    side: THREE.BackSide,
+  }); //pastes the picture on the spherical geometry.
 
   const sphere2 = new THREE.Mesh(geometry2, material2); //creates sphere from spherical geometry and texture
   scene.add(sphere2);
