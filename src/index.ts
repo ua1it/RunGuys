@@ -127,68 +127,84 @@ gltfLoader.load(
 //obstacle
 //let obstacleType: string[] = ['hammerCol', 'hammerRow', 'hammerThorn', 'plate', 'crown'];
 
-const mainLoader = async () => {
-  const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] =
-    await Promise.all([
-      gltfLoader.loadAsync("./models/hammer_1.glb"),
-      gltfLoader.loadAsync("./models/hammer_2.glb"),
-      gltfLoader.loadAsync("./models/hammer_3.glb"),
-      gltfLoader.loadAsync("./models/obstacle.glb"),
-      gltfLoader.loadAsync("./models/crown.glb"),
-      gltfLoader.loadAsync("./models/entrance.glb"),
-      gltfLoader.loadAsync("./models/hammer_2.glb"),
+  const mainLoader = async () => {
+    const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] = await Promise.all([
+      gltfLoader.loadAsync('./models/hammer_1.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+      gltfLoader.loadAsync('./models/hammer_3.glb'),
+      gltfLoader.loadAsync('./models/obstacle.glb'),
+      gltfLoader.loadAsync('./models/crown.glb'),
+      gltfLoader.loadAsync('./models/entrance.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
     ]);
 
-  scene.add(hammer_1.scene);
-  let clock = new THREE.Clock();
-  const mixer = new THREE.AnimationMixer(hammer_1.scene);
-  mixer.clipAction(hammer_1.animations[0]).play();
+    
+    scene.add(hammer_1.scene); 
+    let clock = new THREE.Clock();
+    const mixer = new THREE.AnimationMixer(hammer_1.scene);
+    mixer.clipAction(hammer_1.animations[0]).play();
 
-  scene.add(hammer_2.scene);
-  scene.add(hammer_3.scene);
-  scene.add(obstacle.scene);
-  scene.add(crown.scene);
-  scene.add(entrance.scene);
-  scene.add(hammer_4.scene);
+    scene.add(hammer_2.scene);
+    let nice = hammer_2.scene.children[0].children[0].children[0].children[9].children[0];
+    
+    scene.add(hammer_3.scene);
+    scene.add(obstacle.scene);
+    scene.add(crown.scene);
+    scene.add(entrance.scene);
+    scene.add(hammer_4.scene);
+    
+    hammer_1.scene.position.set(0, 1.5, 0);
+    hammer_1.scene.scale.set(4, 4, 4);   
+    
+    hammer_2.scene.position.set(10, 1, 10);
+    hammer_2.scene.scale.set(0.005, 0.005, 0.005);
 
-  hammer_1.scene.position.set(0, 1.5, 0);
-  hammer_1.scene.scale.set(4, 4, 4);
+    hammer_3.scene.position.set(0, 10, 20);
+    hammer_3.scene.scale.set(0.003, 0.003, 0.003);        
 
-  hammer_2.scene.position.set(10, 1, 10);
-  hammer_2.scene.scale.set(0.005, 0.005, 0.005);
+    obstacle.scene.position.set(-10, 0.78, 0);
+    obstacle.scene.scale.set(0.005, 0.005, 0.005);
 
-  hammer_3.scene.position.set(0, 10, 20);
-  hammer_3.scene.scale.set(0.003, 0.003, 0.003);
-  console.log(hammer_2.animations);
+    crown.scene.position.set(0.5, 2, 206);
+    crown.scene.scale.set(1.5, 1.5, 1.5);
 
-  obstacle.scene.position.set(-10, 0.78, 0);
-  obstacle.scene.scale.set(0.005, 0.005, 0.005);
+    entrance.scene.position.set(40, 2.5, 40);
+    entrance.scene.scale.set(0.5, 0.5, 0.5);
 
-  crown.scene.position.set(0.5, 2, 206);
-  crown.scene.scale.set(1.5, 1.5, 1.5);
+    hammer_4.scene.position.set(-10, 1, 10);
+    hammer_4.scene.scale.set(0.005, 0.005, 0.005);
 
-  entrance.scene.position.set(40, 2.5, 40);
-  entrance.scene.scale.set(0.5, 0.5, 0.5);
+    let target = new THREE.Vector3();
+    console.log(nice.getWorldPosition(target)); //망치
+    console.log(characterControls.model.position); //캐릭터
+    
+    const animate = () => {
+      requestAnimationFrame(animate);
 
-  hammer_4.scene.position.set(-10, 1, 10);
-  hammer_4.scene.scale.set(0.005, 0.005, 0.005);
+      let delta = clock.getDelta()*0.5;
+      mixer.update(delta);
 
-  const animate = () => {
-    requestAnimationFrame(animate);
+      hammer_2.scene.rotation.y -= 0.05;
+      let target = new THREE.Vector3();
+      // console.log(nice.getWorldPosition(target)); //망치
+      //console.log(characterControls.model.position); //캐릭터
 
-    let delta = clock.getDelta() * 0.5;
-    mixer.update(delta);
-    //hammer_1.scene.rotation.y -= 0.01;
-    hammer_2.scene.rotation.y -= 0.05;
-    hammer_3.scene.rotation.x += 0.01;
-    obstacle.scene.rotation.y += 0.01;
-    hammer_4.scene.rotation.y -= 0.05;
 
-    renderer.render(scene, camera);
+      if (Math.ceil(characterControls.model.position.x) == Math.ceil(nice.getWorldPosition(target).x)
+        && Math.ceil(characterControls.model.position.z) == Math.ceil(nice.getWorldPosition(target).z)) {
+        console.log('충돌^_^');
+        characterControls.switchBackToggle();
+      }
+        
+      hammer_3.scene.rotation.x += 0.01;
+      obstacle.scene.rotation.y += 0.01;
+      hammer_4.scene.rotation.y -= 0.05;
+
+      renderer.render(scene, camera);
+    };
+    animate();
   };
-  animate();
-};
-mainLoader();
+  mainLoader();
 
 // CONTROL KEYS
 const keysPressed = {};
