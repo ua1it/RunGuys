@@ -3,7 +3,7 @@ import { CharacterControls } from "./characterControls";
 import * as THREE from "three";
 import { CameraHelper } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // SCENE
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xa8def0);
@@ -16,9 +16,8 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 camera.position.y = 7;
-camera.position.z = -10;
+camera.position.z = -15;
 camera.position.x = 0;
-camera.lookAt(0, 0, 0);
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -26,9 +25,16 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.shadowMap.enabled = true;
 
+const orbitControls = new OrbitControls(camera, renderer.domElement);
+orbitControls.enableDamping = true;
+orbitControls.minDistance = 5;
+orbitControls.maxDistance = 15;
+orbitControls.enablePan = false;
+orbitControls.maxPolarAngle = Math.PI / 2 - 0.05;
+orbitControls.update();
+
 // LIGHTS
 light();
-
 // FLOOR
 //generateFloor()
 
@@ -55,6 +61,7 @@ new GLTFLoader().load("models/FallGuys2.glb", function (gltf) {
     model,
     mixer,
     animationsMap,
+    orbitControls,
     camera,
     "idle"
   );
@@ -67,15 +74,15 @@ function (gltf) {
 },
     function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 
-	},
-	// called when loading has errors
-	function ( error ) {
+  },
+  // called when loading has errors
+  function ( error ) {
 
-		console.log( 'An error happened' );
+    console.log( 'An error happened' );
 
-	}
+  }
 ); */
 
 //Map
@@ -222,6 +229,7 @@ function animate() {
   if (characterControls) {
     characterControls.update(delta, keysPressed);
   }
+  orbitControls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 }
@@ -303,17 +311,36 @@ function light() {
   plight1.position.set(0, -3, -10);
   scene.add(plight1);
 
-  dirLight.position.set(0, 30, 50);
-  dirLight.castShadow = true;
-  dirLight.shadow.camera.top = 30;
-  dirLight.shadow.camera.bottom = 0;
-  dirLight.shadow.camera.left = -30;
-  dirLight.shadow.camera.right = 50;
-  dirLight.shadow.camera.near = 0.1;
-  dirLight.shadow.camera.far = 100;
-  dirLight.shadow.mapSize.width = 4096;
-  dirLight.shadow.mapSize.height = 4096;
+  const plight2 = new THREE.PointLight(0xffffff, 2);
+  plight1.position.set(0, 7, -20);
+  scene.add(plight2);
+
+  dirLight.position.set(0, 100, 100);
+  // dirLight.castShadow = true;
+  // dirLight.shadow.camera.top = 30;
+  // dirLight.shadow.camera.bottom = 0;
+  // dirLight.shadow.camera.left = -30;
+  // dirLight.shadow.camera.right = 50;
+  // dirLight.shadow.camera.near = 0.1;
+  // dirLight.shadow.camera.far = 100;
+  // dirLight.shadow.mapSize.width = 4096;
+  // dirLight.shadow.mapSize.height = 4096;
 
   scene.add(dirLight);
+
+  sky();
   // scene.add( new THREE.CameraHelper(dirLight.shadow.camera))
+}
+
+function sky() {
+  const geometry2 = new THREE.SphereGeometry(500, 32, 16);
+  const texture2 = new THREE.TextureLoader().load("./textures/sky/sky3.webp"); //loads the picture on the spherical geometry
+
+  const material2 = new THREE.MeshBasicMaterial({
+    map: texture2,
+    side: THREE.BackSide,
+  }); //pastes the picture on the spherical geometry.
+
+  const sphere2 = new THREE.Mesh(geometry2, material2); //creates sphere from spherical geometry and texture
+  scene.add(sphere2);
 }
