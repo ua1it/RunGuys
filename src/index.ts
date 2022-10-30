@@ -127,6 +127,7 @@ gltfLoader.load(
 //obstacle
 //let obstacleType: string[] = ['hammerCol', 'hammerRow', 'hammerThorn', 'plate', 'crown'];
 
+
   const mainLoader = async () => {
     const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] = await Promise.all([
       gltfLoader.loadAsync('./models/hammer_1.glb'),
@@ -137,9 +138,10 @@ gltfLoader.load(
       gltfLoader.loadAsync('./models/entrance.glb'),
       gltfLoader.loadAsync('./models/hammer_2.glb'),
     ]);
-
     
     scene.add(hammer_1.scene); 
+    console.log(typeof hammer_1);
+    
     let clock = new THREE.Clock();
     const mixer = new THREE.AnimationMixer(hammer_1.scene);
     mixer.clipAction(hammer_1.animations[0]).play();
@@ -173,10 +175,6 @@ gltfLoader.load(
 
     hammer_4.scene.position.set(-10, 1, 10);
     hammer_4.scene.scale.set(0.005, 0.005, 0.005);
-
-    let target = new THREE.Vector3();
-    console.log(nice.getWorldPosition(target)); //망치
-    console.log(characterControls.model.position); //캐릭터
     
     const animate = () => {
       requestAnimationFrame(animate);
