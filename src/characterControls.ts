@@ -76,11 +76,10 @@ export class CharacterControls {
     // walking
     // jump
     var play = "";
-    if(this.toggleBack){
-        console.log(this.toggleBack)
-        play = "backward"
-    }
-    else if (directionPressed && this.toggleRun && !this.toggleJump) {
+    if (this.toggleBack) {
+      console.log(this.toggleBack);
+      play = "backward";
+    } else if (directionPressed && this.toggleRun && !this.toggleJump) {
       play = "running";
     } else if (directionPressed && !this.toggleJump) {
       play = "walking";
@@ -105,7 +104,7 @@ export class CharacterControls {
     this.mixer.update(delta * 1.4);
 
     if (this.currentAction == "running" || this.currentAction == "walking") {
-      if(this.model.position.y >= 0.08){
+      if (this.model.position.y >= 0.08) {
         this.model.position.y -= 0.02;
       }
 
@@ -139,6 +138,9 @@ export class CharacterControls {
       this.model.position.x += moveX;
       this.model.position.z += moveZ;
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
+
+      console.log(this.model);
+      console.log(this.model.position);
     }
 
     if (this.currentAction == "jump") {
@@ -157,16 +159,16 @@ export class CharacterControls {
       const moveX = this.walkDirection.x * velocity * delta;
       const moveZ = this.walkDirection.z * velocity * delta;
 
-      if(this.jumpTime >= 30){
+      if (this.jumpTime >= 30) {
         this.model.position.x += moveX;
         this.model.position.z += moveZ;
         this.model.position.y -= 0.092;
         this.jumpTime += 1;
-        if(this.jumpTime == 60) {
+        if (this.jumpTime == 60) {
           this.jumpTime = 0;
           this.model.position.y = 0.08;
-          }
-      }else{
+        }
+      } else {
         this.model.position.x += moveX;
         this.model.position.z += moveZ;
         this.model.position.y += 0.085;
@@ -178,29 +180,28 @@ export class CharacterControls {
     }
 
     if (this.currentAction == "backward") {
-        this.mixer.update(delta * 0.5);
-        // diagonal movement angle offset
-        var directionOffset = this.directionOffset(keysPressed);
-  
-        // calculate direction
-        this.camera.getWorldDirection(this.walkDirection);
-        this.walkDirection.normalize();
-        this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
-  
-        const velocity = this.runVelocity;
-  
-        // move model & camera
-        const moveX = this.walkDirection.x * velocity * delta*0.5;
-        const moveZ = this.walkDirection.z * velocity * delta*0.5;
-  
-        
-          this.model.position.x -= moveX;
-          this.model.position.z -= moveZ;
-        
-        // console.log("jumpTime: "+this.jumpTime);
-        // console.log(this.model.position.y);
-        this.updateCameraTarget(moveX, moveZ, this.currentAction);
-      }
+      this.mixer.update(delta * 0.5);
+      // diagonal movement angle offset
+      var directionOffset = this.directionOffset(keysPressed);
+
+      // calculate direction
+      this.camera.getWorldDirection(this.walkDirection);
+      this.walkDirection.normalize();
+      this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+
+      const velocity = this.runVelocity;
+
+      // move model & camera
+      const moveX = this.walkDirection.x * velocity * delta * 0.5;
+      const moveZ = this.walkDirection.z * velocity * delta * 0.5;
+
+      this.model.position.x -= moveX;
+      this.model.position.z -= moveZ;
+
+      // console.log("jumpTime: "+this.jumpTime);
+      // console.log(this.model.position.y);
+      this.updateCameraTarget(moveX, moveZ, this.currentAction);
+    }
   }
 
   private updateCameraTarget(moveX: number, moveZ: number, Action: String) {
@@ -209,7 +210,7 @@ export class CharacterControls {
     // this.camera.position.z += moveZ
     // this.camera.position.y += moveY
 
-    if(Action == "running" || Action == "walking"){
+    if (Action == "running" || Action == "walking") {
       // move camera
       this.camera.position.x = this.camera.position.x + moveX;
       this.camera.position.z = this.camera.position.z + moveZ;
@@ -217,11 +218,11 @@ export class CharacterControls {
       // update camera target
       this.cameraTarget.x = this.model.position.x;
       this.cameraTarget.z = this.model.position.z;
-    }else if(Action == "jump"){
+    } else if (Action == "jump") {
       // move camera
-      if(this.jumpTime >= 20){
+      if (this.jumpTime >= 20) {
         this.camera.position.y = this.camera.position.y + 0.08;
-      }else{
+      } else {
         this.camera.position.x = this.camera.position.x + moveX;
         this.camera.position.z = this.camera.position.z + moveZ;
         this.camera.position.y = this.camera.position.y - 0.08;
@@ -230,18 +231,15 @@ export class CharacterControls {
       this.cameraTarget.z = this.model.position.z;
       this.cameraTarget.y = this.model.position.y;
       // update camera target
-    }
-    else if(Action == "backward"){
-        
-          this.camera.position.x = this.camera.position.x - moveX;
-          this.camera.position.z = this.camera.position.z - moveZ;
-          
+    } else if (Action == "backward") {
+      this.camera.position.x = this.camera.position.x - moveX;
+      this.camera.position.z = this.camera.position.z - moveZ;
 
-        this.cameraTarget.x = this.model.position.x;
-        this.cameraTarget.z = this.model.position.z;
-        this.cameraTarget.y = this.model.position.y;
-        // update camera target
-      }
+      this.cameraTarget.x = this.model.position.x;
+      this.cameraTarget.z = this.model.position.z;
+      this.cameraTarget.y = this.model.position.y;
+      // update camera target
+    }
   }
 
   private directionOffset(keysPressed: any) {

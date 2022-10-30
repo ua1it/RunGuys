@@ -18,7 +18,7 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.y = 7;
 camera.position.z = -10;
 camera.position.x = 0;
-camera.lookAt( 0,0,0 );
+camera.lookAt(0, 0, 0);
 
 // RENDERER
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -83,7 +83,7 @@ const gltfLoader = new GLTFLoader();
 let mixer: THREE.AnimationMixer;
 
 gltfLoader.load(
-  "models/untitled.glb",
+  "models/wallTest.glb",
   (gltf) => {
     console.log("success");
     console.log(gltf);
@@ -95,6 +95,18 @@ gltfLoader.load(
     gltf.animations.forEach((clip) => {
       mixer.clipAction(clip).play();
     });
+
+    let Cube = gltf.scene.children[5];
+    let Cube002 = gltf.scene.children[6];
+    let Cube003 = gltf.scene.children[7];
+
+    console.log("Position");
+    console.log(Cube.getWorldPosition(Cube.position));
+    //Vector3 {x: 22.379180908203125, y: 0.33713316917419434, z: 11.690906524658203}
+    console.log(Cube002.getWorldPosition(Cube002.position));
+    //Vector3 {x: -22.561954498291016, y: -0.2211005687713623, z: 11.767125129699707}
+    console.log(Cube003.getWorldPosition(Cube003.position));
+    //Vector3 {x: 0.8326816558837891, y: -2.900982618331909, z: -7.809866428375244}
   },
   function (xhr) {
     console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -108,70 +120,68 @@ gltfLoader.load(
 //obstacle
 //let obstacleType: string[] = ['hammerCol', 'hammerRow', 'hammerThorn', 'plate', 'crown'];
 
-  const mainLoader = async () => {
-    const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] = await Promise.all([
-      gltfLoader.loadAsync('./models/hammer_1.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-      gltfLoader.loadAsync('./models/hammer_3.glb'),
-      gltfLoader.loadAsync('./models/obstacle.glb'),
-      gltfLoader.loadAsync('./models/crown.glb'),
-      gltfLoader.loadAsync('./models/entrance.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-
+const mainLoader = async () => {
+  const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] =
+    await Promise.all([
+      gltfLoader.loadAsync("./models/hammer_1.glb"),
+      gltfLoader.loadAsync("./models/hammer_2.glb"),
+      gltfLoader.loadAsync("./models/hammer_3.glb"),
+      gltfLoader.loadAsync("./models/obstacle.glb"),
+      gltfLoader.loadAsync("./models/crown.glb"),
+      gltfLoader.loadAsync("./models/entrance.glb"),
+      gltfLoader.loadAsync("./models/hammer_2.glb"),
     ]);
 
-    scene.add(hammer_1.scene); 
-    let clock = new THREE.Clock();
-    const mixer = new THREE.AnimationMixer(hammer_1.scene);
-    mixer.clipAction(hammer_1.animations[0]).play();
+  scene.add(hammer_1.scene);
+  let clock = new THREE.Clock();
+  const mixer = new THREE.AnimationMixer(hammer_1.scene);
+  mixer.clipAction(hammer_1.animations[0]).play();
 
-    scene.add(hammer_2.scene);
-    scene.add(hammer_3.scene);
-    scene.add(obstacle.scene);
-    scene.add(crown.scene);
-    scene.add(entrance.scene);
-    scene.add(hammer_4.scene);
+  scene.add(hammer_2.scene);
+  scene.add(hammer_3.scene);
+  scene.add(obstacle.scene);
+  scene.add(crown.scene);
+  scene.add(entrance.scene);
+  scene.add(hammer_4.scene);
 
-    
-    hammer_1.scene.position.set(0, 1.5, 0);
-    hammer_1.scene.scale.set(4, 4, 4);   
+  hammer_1.scene.position.set(0, 1.5, 0);
+  hammer_1.scene.scale.set(4, 4, 4);
 
-    hammer_2.scene.position.set(10, 1, 10);
-    hammer_2.scene.scale.set(0.005, 0.005, 0.005);
+  hammer_2.scene.position.set(10, 1, 10);
+  hammer_2.scene.scale.set(0.005, 0.005, 0.005);
 
-    hammer_3.scene.position.set(0, 10, 20);
-    hammer_3.scene.scale.set(0.003, 0.003, 0.003);
-    console.log(hammer_2.animations);
-    
+  hammer_3.scene.position.set(0, 10, 20);
+  hammer_3.scene.scale.set(0.003, 0.003, 0.003);
+  console.log(hammer_2.animations);
 
-    obstacle.scene.position.set(-10, 0.78, 0);
-    obstacle.scene.scale.set(0.005, 0.005, 0.005);
+  obstacle.scene.position.set(-10, 0.78, 0);
+  obstacle.scene.scale.set(0.005, 0.005, 0.005);
 
-    crown.scene.position.set(0.5, 2, 206);
-    crown.scene.scale.set(1.5, 1.5, 1.5);
+  crown.scene.position.set(0.5, 2, 206);
+  crown.scene.scale.set(1.5, 1.5, 1.5);
 
-    entrance.scene.position.set(40, 2.5, 40);
-    entrance.scene.scale.set(0.5, 0.5, 0.5);
+  entrance.scene.position.set(40, 2.5, 40);
+  entrance.scene.scale.set(0.5, 0.5, 0.5);
 
-    hammer_4.scene.position.set(-10, 1, 10);
-    hammer_4.scene.scale.set(0.005, 0.005, 0.005);
+  hammer_4.scene.position.set(-10, 1, 10);
+  hammer_4.scene.scale.set(0.005, 0.005, 0.005);
 
-    const animate = () => {
-      requestAnimationFrame(animate);
+  const animate = () => {
+    requestAnimationFrame(animate);
 
-      let delta = clock.getDelta()*0.5;
-      mixer.update(delta);
-      //hammer_1.scene.rotation.y -= 0.01;
-      hammer_2.scene.rotation.y -= 0.05;
-      hammer_3.scene.rotation.x += 0.01;
-      obstacle.scene.rotation.y += 0.01;
-      hammer_4.scene.rotation.y -= 0.05;
+    let delta = clock.getDelta() * 0.5;
+    mixer.update(delta);
+    //hammer_1.scene.rotation.y -= 0.01;
+    hammer_2.scene.rotation.y -= 0.05;
+    hammer_3.scene.rotation.x += 0.01;
+    obstacle.scene.rotation.y += 0.01;
+    hammer_4.scene.rotation.y -= 0.05;
 
-      renderer.render(scene, camera);
-    };
-    animate();
+    renderer.render(scene, camera);
   };
-  mainLoader();
+  animate();
+};
+mainLoader();
 
 // CONTROL KEYS
 const keysPressed = {};
@@ -186,8 +196,7 @@ document.addEventListener(
       if (event.key == " ") {
         // space
         characterControls.switchJumpToggle();
-      }
-      else if (event.key == "n") {
+      } else if (event.key == "n") {
         // space
         characterControls.switchBackToggle();
       }
