@@ -31,15 +31,15 @@ export class KeyDisplay {
         this.map.set(SPACE_VISIBLE, space_visible)
         this.map.set(N, n)
 
-        this.map.forEach( (v, k) => {
-            v.style.color = 'blue'
-            v.style.fontSize = '50px'
-            v.style.fontWeight = '800'
-            v.style.position = 'absolute'
-            v.textContent = k
-        })
+        // this.map.forEach( (v, k) => {
+        //     v.style.color = 'blue'
+        //     v.style.fontSize = '50px'
+        //     v.style.fontWeight = '800'
+        //     v.style.position = 'absolute'
+        //     v.textContent = k
+        // })
 
-        this.updatePosition()
+        // this.updatePosition()
 
         this.map.forEach( (v, _) => {
             document.body.append(v)
@@ -55,6 +55,7 @@ export class KeyDisplay {
         // this.map.get(SPACE).style.top = `${window.innerHeight - 150}px`
         this.map.get(SPACE_VISIBLE).style.top = `${window.innerHeight - 150}px`
         this.map.get(N).style.top = `${window.innerHeight-200}px`
+        
 
         this.map.get(W).style.left = `${300}px`
         this.map.get(A).style.left = `${200}px`
