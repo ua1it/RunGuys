@@ -348,7 +348,7 @@ function light() {
 
 function sky() {
   const geometry2 = new THREE.SphereGeometry(500, 32, 16);
-  const texture2 = new THREE.TextureLoader().load("./textures/sky/sky3.webp"); //loads the picture on the spherical geometry
+  const texture2 = new THREE.TextureLoader().load("./textures/sky/sky.webp"); //loads the picture on the spherical geometry
 
   const material2 = new THREE.MeshBasicMaterial({
     map: texture2,
