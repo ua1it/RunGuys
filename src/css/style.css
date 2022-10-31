@@ -77,24 +77,25 @@ body{
 	text-align: center;
  }
  #youWIN{
-	width: 20rem;
-	height: 5rem;
-	top: 50%;
-	left: 50%;
+	width: 40%;
+	height: 15%;
 	position: absolute;
-	display: none;
-	opacity: 0.9;
+	display: block;
 	z-index: 1;
 	text-align: center;
  }
+ #youWinText {
+	color: rgb(227, 34, 34);
+	font-size: 80px;
+	font-weight: bold;
+	text-align: center;
+ }
  #titleImg{
-	width: 50%;
-	height: 27%;
+	margin-top:9%;
+	width: 42%;
+	height: 22%;
  }
 
- #youWinText {
-	color: red;
- }
  #titleHr {
 	border: 0;
 	height: 5px;
