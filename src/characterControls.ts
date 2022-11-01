@@ -121,53 +121,141 @@ export class CharacterControls {
         this.model.position.y -= 0.02;
       }
 
-      // calculate towards camera direction
-      var angleYCameraDirection = Math.atan2(
-        this.camera.position.x - this.model.position.x,
-        this.camera.position.z - this.model.position.z
-      );
-      // diagonal movement angle offset
-      var directionOffset = this.directionOffset(keysPressed);
+      //문 아닌곳 통과 X
+      if (
+        (this.model.position.x >= 3.3166774561833825 &&
+          this.model.position.x <= 20.81912740053712 &&
+          this.model.position.z >= 27.319982458157712 &&
+          this.model.position.z <= 28) ||
+        (this.model.position.x >= -20.79844950790819 &&
+          this.model.position.x <= -2.279708518432182 &&
+          this.model.position.z >= 27.319982458157712 &&
+          this.model.position.z <= 28) ||
+        (this.model.position.x >= 5.602819376877487 &&
+          this.model.position.x <= 18.239590404069936 &&
+          this.model.position.z >= 63.19363759812949 &&
+          this.model.position.z <= 64) ||
+        (this.model.position.x >= -18.31905216398231 &&
+          this.model.position.x <= -0.04800676218540478 &&
+          this.model.position.z >= 63.19363759812949 &&
+          this.model.position.z <= 64) ||
+        (this.model.position.x >= -3.6365035925221205 &&
+          this.model.position.x <= 14.935624560031984 &&
+          this.model.position.z >= 95.65133790975292 &&
+          this.model.position.z <= 96) ||
+        (this.model.position.x >= -15.64444813021538 &&
+          this.model.position.x <= -8.592945444470576 &&
+          this.model.position.z >= 95.65133790975292 &&
+          this.model.position.z <= 96) ||
+        (this.model.position.x >= -0.7463468757034715 &&
+          this.model.position.x <= 12.24164959653715 &&
+          this.model.position.z >= 126.12948025952553 &&
+          this.model.position.z <= 127) ||
+        (this.model.position.x >= -12.451377499873242 &&
+          this.model.position.x <= -5.470249057017633 &&
+          this.model.position.z >= 126.12948025952553 &&
+          this.model.position.z <= 127) ||
+        (this.model.position.x >= 2.3557707583573153 &&
+          this.model.position.x <= 8.97436502587871 &&
+          this.model.position.z >= 152.06569332622134 &&
+          this.model.position.z <= 153) ||
+        (this.model.position.x >= -8.773543344138218 &&
+          this.model.position.x <= -2.4190768768399247 &&
+          this.model.position.z >= 152.06569332622134 &&
+          this.model.position.z <= 153)
+      ) {
+        console.log(
+          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        );
+        // calculate towards camera direction
+        var angleYCameraDirection = Math.atan2(
+          this.camera.position.x - this.model.position.x,
+          this.camera.position.z - this.model.position.z
+        );
+        // diagonal movement angle offset
+        var directionOffset = this.directionOffset(keysPressed);
 
-      // rotate model
-      this.rotateQuarternion.setFromAxisAngle(
-        this.rotateAngle,
-        directionOffset
-      );
-      this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
+        // rotate model
+        this.rotateQuarternion.setFromAxisAngle(
+          this.rotateAngle,
+          directionOffset
+        );
+        this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
 
-      // calculate direction
-      this.camera.getWorldDirection(this.walkDirection);
-      this.walkDirection.y = 0;
-      this.walkDirection.normalize();
-      this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+        // calculate direction
+        this.camera.getWorldDirection(this.walkDirection);
+        this.walkDirection.y = 0;
+        this.walkDirection.normalize();
+        this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
 
-      // run/walk velocity
-      const velocity = this.runVelocity;
+        // run/walk velocity
+        const velocity = this.runVelocity;
 
-      // move model & camera
-      const moveX = this.walkDirection.x * velocity * delta;
-      const moveZ = this.walkDirection.z * velocity * delta;
-      this.model.position.x += moveX;
-      this.model.position.z += moveZ;
-      this.updateCameraTarget(moveX, moveZ, this.currentAction);
+        // move model & camera
+        const moveX = this.walkDirection.x * velocity * delta;
+        const moveZ = this.walkDirection.z * velocity * delta;
+        this.model.position.x += moveX;
+        if (moveZ >= 0) {
+          this.updateCameraTarget(moveX, 0, this.currentAction);
+        } else {
+          const moveZ = this.walkDirection.x * velocity * delta;
+          this.model.position.z += moveZ;
+          this.updateCameraTarget(moveX, moveZ, this.currentAction);
+        }
+      } else {
+        // calculate towards camera direction
+        var angleYCameraDirection = Math.atan2(
+          this.camera.position.x - this.model.position.x,
+          this.camera.position.z - this.model.position.z
+        );
+        // diagonal movement angle offset
+        var directionOffset = this.directionOffset(keysPressed);
 
-      // let testButton = document.getElementById('testButton') as HTMLElement;
-      // console.log('button: '+ JSON.stringify(testButton));
-      // testButton.addEventListener("click", () => {
-      //   alert("clicked!");
-      // });
+        // rotate model
+        this.rotateQuarternion.setFromAxisAngle(
+          this.rotateAngle,
+          directionOffset
+        );
+        this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
 
-      // z가 210보다 높고 x가 -8.4부터 8.4사이가 결승선
-      if(this.model.position.z >= 210.5 && (this.model.position.x <= 8.4 && this.model.position.x >= -8.4)){
-        document.getElementById("youWIN").style.display = "block";
-        // alert("GAME IS OVER");
+        // calculate direction
+        this.camera.getWorldDirection(this.walkDirection);
+        this.walkDirection.y = 0;
+        this.walkDirection.normalize();
+        this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+
+        // run/walk velocity
+        const velocity = this.runVelocity;
+
+        // move model & camera
+        const moveX = this.walkDirection.x * velocity * delta;
+        const moveZ = this.walkDirection.z * velocity * delta;
+        this.model.position.x += moveX;
+        this.model.position.z += moveZ;
+        this.updateCameraTarget(moveX, moveZ, this.currentAction);
+
+        // let testButton = document.getElementById('testButton') as HTMLElement;
+        // console.log('button: '+ JSON.stringify(testButton));
+        // testButton.addEventListener("click", () => {
+        //   alert("clicked!");
+        // });
+
+        // z가 210보다 높고 x가 -8.4부터 8.4사이가 결승선
+        if (
+          this.model.position.z >= 210.5 &&
+          this.model.position.x <= 8.4 &&
+          this.model.position.x >= -8.4
+        ) {
+          document.getElementById("youWIN").style.display = "block";
+          // alert("GAME IS OVER");
+        }
+
+        console.log("x: " + this.model.position.x);
+        console.log("z: " + this.model.position.z);
+
+        console.log(this.model);
+        console.log(this.model.position);
       }
-      console.log('x: '+ this.model.position.x);
-      console.log('z: '+ this.model.position.z);
-
-      console.log(this.model);
-      console.log(this.model.position);
     }
 
     if (this.currentAction == "jump") {
