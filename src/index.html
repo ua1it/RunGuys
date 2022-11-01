@@ -23,7 +23,7 @@
               var progressbar = $('#progressbar'),
                 max = progressbar.attr('max'),
                 time = (1000/max)*2,	
-                    value = progressbar.val();
+                value = progressbar.val();
 
                 var loading = function() {
                     value += 0.25;
@@ -31,8 +31,8 @@
                     
                     $('.progress-value').html(value.toFixed(0) + '%');
                     if (value >= max) {
-                        clearInterval(animate);    
-                        document.getElementById("loading").style.display ="none";
+                        clearInterval(animate);
+                        document.getElementById("loading").style.display ="none";    
                         document.getElementById("youWIN").style.display = "none";
                     }
                 };
@@ -45,16 +45,23 @@
         </script>
   </head>
   <body>
-      <div id>
+      <div class = "box">
         <div id = "loading" class="demo-wrapper html5-progress-bar">
-          <h1 id = "titleText">Welcome To RunGuys!</h1><br><hr id ="titleHr"><br>
+          <img id = "titleImg" src = "models/images/Title_2.png"/>
+          <!-- <br><hr id ="titleHr"><br> -->
           <div class="progress-bar-wrapper">
             <progress id="progressbar" value="0" max="100"></progress>
-            <span class="progress-value">0%</span>          
           </div>
+          <br><text id ="progress-value-loading">Loading </text><span class="progress-value" id="progress-value-id">0%</span>
+          <br>
+          <!-- <h3>Computer Graphics TermProject</h3><br>
+          201835429 김윤호<br>
+          201835506 임동혁<br>
+          201835509 임인범<br>
+          201835531 조연겸<br> -->
         </div>
         <div id = "youWIN">
-          <h1 id = "youWinText">You Win!!</h1>
+          <p id = "youWinText">You Finished The Race!</p>
         </div>
         <script src = "index.js">
         </script>
