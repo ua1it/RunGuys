@@ -13,6 +13,7 @@ export class CharacterControls {
   toggleRun: boolean = true;
   toggleJump: boolean = false;
   toggleBack: boolean = false;
+  toggleFinish: boolean = false;
   currentAction: string;
 
   // temporary data
@@ -70,9 +71,12 @@ export class CharacterControls {
     }, 1000);
   }
 
+  public switchFinishToggle() {
+    this.toggleFinish = !this.toggleFinish;
+  }
+
   public update(delta: number, keysPressed: any) {
     const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);
-
     // available animation
     // falling
     // backward
@@ -80,13 +84,16 @@ export class CharacterControls {
     // running
     // walking
     // jump
+    console.log(this.toggleFinish);
     var play = "";
     if (this.toggleBack) {
-      console.log(this.toggleBack);
       play = "backward";
     } else if (directionPressed && this.toggleRun && !this.toggleJump) {
       play = "running";
-    } else if (directionPressed && !this.toggleJump) {
+    } 
+    else if (this.toggleFinish) {
+      play = "Cheering";
+    }else if (directionPressed && !this.toggleJump) {
       play = "walking";
     } else {
       if (this.toggleJump) {
@@ -97,13 +104,14 @@ export class CharacterControls {
     }
 
     if (this.currentAction != play) {
-      const toPlay = this.animationsMap.get(play);
-      const current = this.animationsMap.get(this.currentAction);
+      
+        const toPlay = this.animationsMap.get(play);
+        const current = this.animationsMap.get(this.currentAction);
 
-      current.fadeOut(this.fadeDuration);
-      toPlay.reset().fadeIn(this.fadeDuration).play();
+        current.fadeOut(this.fadeDuration);
+        toPlay.reset().fadeIn(this.fadeDuration).play();
 
-      this.currentAction = play;
+        this.currentAction = play;
     }
 
     this.mixer.update(delta * 1.4);
@@ -308,6 +316,10 @@ export class CharacterControls {
       // console.log("jumpTime: "+this.jumpTime);
       // console.log(this.model.position.y);
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
+    }
+    if (this.currentAction == "finish") {
+      
+      console.log("finish");
     }
   }
 

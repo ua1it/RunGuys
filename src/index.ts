@@ -40,7 +40,7 @@ light();
 
 // MODEL WITH ANIMATIONS
 var characterControls: CharacterControls;
-new GLTFLoader().load("models/FallGuys2.glb", function (gltf) {
+new GLTFLoader().load("models/FallGuys3.glb", function (gltf) {
   const model = gltf.scene;
   model.traverse(function (object: any) {
     if (object.isMesh) object.castShadow = true;
@@ -210,6 +210,7 @@ const keyDisplayQueue = new KeyDisplay();
 document.addEventListener(
   "keydown",
   (event) => {
+    console.log(event.key);
     keyDisplayQueue.down(event.key);
     if (event.shiftKey && characterControls) {
       characterControls.switchRunToggle();
@@ -220,6 +221,10 @@ document.addEventListener(
       } else if (event.key == "n") {
         // space
         characterControls.switchBackToggle();
+      }
+      else if (event.key == "q") {
+        // space
+        characterControls.switchFinishToggle();
       }
       (keysPressed as any)[event.key.toLowerCase()] = true;
     }
