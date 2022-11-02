@@ -1,8 +1,8 @@
 import { KeyDisplay } from "./utils";
 import { CharacterControls } from "./characterControls";
 import * as THREE from "three";
-import { CameraHelper } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { AnimationMixer, CameraHelper, Mesh, Object3D, Vector3 } from "three";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // SCENE
 const scene = new THREE.Scene();
@@ -127,76 +127,122 @@ gltfLoader.load(
 //obstacle
 //let obstacleType: string[] = ['hammerCol', 'hammerRow', 'hammerThorn', 'plate', 'crown'];
 
-
   const mainLoader = async () => {
-    const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] = await Promise.all([
+    const [obs1, obs2, obs3, obs4, obs5, crown, entrance] = await Promise.all([
       gltfLoader.loadAsync('./models/hammer_1.glb'),
       gltfLoader.loadAsync('./models/hammer_2.glb'),
       gltfLoader.loadAsync('./models/hammer_3.glb'),
-      gltfLoader.loadAsync('./models/obstacle.glb'),
+      gltfLoader.loadAsync('./models/hammer_4.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+
       gltfLoader.loadAsync('./models/crown.glb'),
       gltfLoader.loadAsync('./models/entrance.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
     ]);
-    
-    scene.add(hammer_1.scene); 
-    console.log(typeof hammer_1);
-    
-    let clock = new THREE.Clock();
-    const mixer = new THREE.AnimationMixer(hammer_1.scene);
-    mixer.clipAction(hammer_1.animations[0]).play();
 
-    scene.add(hammer_2.scene);
-    let nice = hammer_2.scene.children[0].children[0].children[0].children[9].children[0];
-    
-    scene.add(hammer_3.scene);
-    scene.add(obstacle.scene);
+    // 충돌 감지 위원회 함수
+    function isCollision(collisionPoint:Object3D): void{
+      let target = new THREE.Vector3();
+
+      // 캐릭터의 중앙 좌표와 장애물의 특정 좌표가 일치하게 되면 충돌한다.
+      if (Math.ceil(characterControls.model.position.x) == Math.ceil(collisionPoint.getWorldPosition(target).x)
+        && Math.ceil(characterControls.model.position.z) == Math.ceil(collisionPoint.getWorldPosition(target).z)
+        && collisionPoint.getWorldPosition(target).y <2) {
+        
+        console.log('충돌^_^');
+        // 뒤로 밀려나는 에니메이션 실행
+        characterControls.switchBackToggle();
+      }
+    }
+
+    // 망치 type1 생성함수. 
+    // 수직 회전하는 작은 망치
+    function makeHammerType_1(hammer: GLTF, x: number, y: number, z: number) : AnimationMixer {
+      scene.add(hammer.scene);
+
+      hammer.scene.position.set(x, y, z);
+      hammer.scene.scale.set(4, 4, 4);
+
+      // 망치에 적용되어있는 애니메이션을 실행시키기 위한 mixer 함수
+      const mixer = new THREE.AnimationMixer(hammer.scene);
+      mixer.clipAction(hammer.animations[0]).play();
+
+      return mixer;
+    } 
+
+    // 망치 type2,3,4 생성 함수
+    function makeHammerType_2_3_4(hammer: GLTF, hammerType: number, x: number, y: number, z: number): void {
+      scene.add(hammer.scene);
+      hammer.scene.position.set(x, y, z);
+
+      // 각 장애물마다 다른 scale 적용
+      switch (hammerType) {
+        //망치 type2 : 수평 회전하는 망치 
+        case 2:
+          hammer.scene.scale.set(0.005, 0.005, 0.005);
+          break;
+        
+        // 망치 type3 : 가시 달린 큰 장애물
+        case 3:
+          hammer.scene.scale.set(0.003, 0.003, 0.003);
+          break;
+        
+        //망치 type4 : 접시같은 장애물 
+        case 4:
+          hammer.scene.scale.set(0.005, 0.005, 0.005);
+          break;
+        
+        default:
+          break;
+      }
+    }
+
+    // 망치 type1의 애니메이션을 실행시키키 위한 시간 변수
+    const clock = new THREE.Clock();
+
+    // 첫번째 칸 장애물들 생성
+    const mixer1 = makeHammerType_1(obs1, 0, 1.5, 0);
+    makeHammerType_2_3_4(obs2, 2, 10, 1, 10);    
+    makeHammerType_2_3_4(obs3, 3, 0, 10, 20)
+    makeHammerType_2_3_4(obs4, 4, -10, 0.78, 0);
+    makeHammerType_2_3_4(obs5, 2, -10, 1, 10);
+
+    // 왕관, 입장문 생성
     scene.add(crown.scene);
     scene.add(entrance.scene);
-    scene.add(hammer_4.scene);
-    
-    hammer_1.scene.position.set(0, 1.5, 0);
-    hammer_1.scene.scale.set(4, 4, 4);   
-    
-    hammer_2.scene.position.set(10, 1, 10);
-    hammer_2.scene.scale.set(0.005, 0.005, 0.005);
-
-    hammer_3.scene.position.set(0, 10, 20);
-    hammer_3.scene.scale.set(0.003, 0.003, 0.003);        
-
-    obstacle.scene.position.set(-10, 0.78, 0);
-    obstacle.scene.scale.set(0.005, 0.005, 0.005);
-
     crown.scene.position.set(0.5, 2, 206);
     crown.scene.scale.set(1.5, 1.5, 1.5);
-
     entrance.scene.position.set(40, 2.5, 40);
     entrance.scene.scale.set(0.5, 0.5, 0.5);
 
-    hammer_4.scene.position.set(-10, 1, 10);
-    hammer_4.scene.scale.set(0.005, 0.005, 0.005);
+
+    console.log(obs4);
     
+
+    // 모든 장애물을 움직이게 하고 충돌을 감지하는 함수
     const animate = () => {
+      // console.log(nice.getWorldPosition(target)); //망치 위치 확인
+      // console.log(characterControls.model.position); //캐릭터 위치 확인
+      
       requestAnimationFrame(animate);
 
-      let delta = clock.getDelta()*0.5;
-      mixer.update(delta);
+      // 망치 type1 관련 함수
+      let delta = clock.getDelta() * 0.5;
+      mixer1.update(delta);
 
-      hammer_2.scene.rotation.y -= 0.05;
-      let target = new THREE.Vector3();
-      // console.log(nice.getWorldPosition(target)); //망치
-      //console.log(characterControls.model.position); //캐릭터
+      // 첫번째 칸 장애물들
+      obs2.scene.rotation.y -= 0.05;
+      isCollision(obs2.scene.children[0].children[0].children[0].children[9].children[0]);
+      
+      obs3.scene.rotation.x += 0.01;
+      isCollision(obs3.scene.children[0].children[0].children[0].children[9].children[0]);      
+    
+      obs4.scene.rotation.y += 0.01;
+      isCollision(obs4.scene.children[0].children[0].children[0].children[13].children[0]);
+      
+      obs5.scene.rotation.y -= 0.05;
+      isCollision(obs5.scene.children[0].children[0].children[0].children[9].children[0]);
 
-
-      if (Math.ceil(characterControls.model.position.x) == Math.ceil(nice.getWorldPosition(target).x)
-        && Math.ceil(characterControls.model.position.z) == Math.ceil(nice.getWorldPosition(target).z)) {
-        console.log('충돌^_^');
-        characterControls.switchBackToggle();
-      }
-        
-      hammer_3.scene.rotation.x += 0.01;
-      obstacle.scene.rotation.y += 0.01;
-      hammer_4.scene.rotation.y -= 0.05;
+      // 두번째 칸 장애물들
 
       renderer.render(scene, camera);
     };
