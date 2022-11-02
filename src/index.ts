@@ -1,7 +1,7 @@
 import { KeyDisplay } from "./utils";
 import { CharacterControls } from "./characterControls";
 import * as THREE from "three";
-import { AnimationMixer, CameraHelper } from "three";
+import { AnimationMixer, CameraHelper, Mesh, Object3D } from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // SCENE
@@ -129,24 +129,24 @@ gltfLoader.load(
 
 
   const mainLoader = async () => {
-    const [H1, H2, H3, H4, H5, obstacle, crown, entrance] = await Promise.all([
+    const [H1, H2, H3, H4, H5, crown, entrance] = await Promise.all([
       gltfLoader.loadAsync('./models/hammer_1.glb'),
       gltfLoader.loadAsync('./models/hammer_2.glb'),
       gltfLoader.loadAsync('./models/hammer_3.glb'),
+      gltfLoader.loadAsync('./models/hammer_4.glb'),
       gltfLoader.loadAsync('./models/hammer_2.glb'),
-      gltfLoader.loadAsync('./models/hammer_1.glb'),
 
-      gltfLoader.loadAsync('./models/obstacle.glb'),
       gltfLoader.loadAsync('./models/crown.glb'),
       gltfLoader.loadAsync('./models/entrance.glb'),
     ]);
 
-    function isCollision(hammer:GLTF): void{
-      let nice = hammer.scene.children[0].children[0].children[0].children[9].children[0];
+    function isCollision(collisionPoint:Object3D): void{
+
       let target = new THREE.Vector3();
 
-      if (Math.ceil(characterControls.model.position.x) == Math.ceil(nice.getWorldPosition(target).x)
-        && Math.ceil(characterControls.model.position.z) == Math.ceil(nice.getWorldPosition(target).z)) {
+      if (Math.ceil(characterControls.model.position.x) == Math.ceil(collisionPoint.getWorldPosition(target).x)
+        && Math.ceil(characterControls.model.position.z) == Math.ceil(collisionPoint.getWorldPosition(target).z)
+        && collisionPoint.getWorldPosition(target).y <2) {
         console.log('충돌^_^');
         characterControls.switchBackToggle();
       }
@@ -171,24 +171,32 @@ gltfLoader.load(
       hammer.scene.scale.set(0.005, 0.005, 0.005);
     }
 
+    function makeHammerType_3(hammer: GLTF, x: number, y: number, z: number): void {
+      scene.add(hammer.scene); 
+
+      hammer.scene.position.set(x, y, z);
+      hammer.scene.scale.set(0.003, 0.003, 0.003);        
+    }
+    function makeHammerType_4(hammer: GLTF, x: number, y: number, z: number): void {
+      scene.add(hammer.scene); 
+
+      hammer.scene.position.set(x, y, z);
+      hammer.scene.scale.set(0.003, 0.003, 0.003);        
+    }
+
     const clock = new THREE.Clock();
 
     // 첫번째 칸 장애물들
     const mixer1 = makeHammerType_1(H1, 0, 1.5, 0);
-    makeHammerType_2(H2, 10, 1, 10);
-    makeHammerType_2(H4, -10, 1, 10)
-    const mixer2 = makeHammerType_1(H5, 0, 1.5, 2);
-    
-    scene.add(H3.scene);
-    scene.add(obstacle.scene);
+    makeHammerType_2(H2, 10, 1, 10);    
+    makeHammerType_3(H3, 0, 10, 20)
+    scene.add(H4.scene);
+    makeHammerType_2(H5, -10, 1, 10);
     scene.add(crown.scene);
     scene.add(entrance.scene);
 
-    H3.scene.position.set(0, 10, 20);
-    H3.scene.scale.set(0.003, 0.003, 0.003);        
-
-    obstacle.scene.position.set(-10, 0.78, 0);
-    obstacle.scene.scale.set(0.005, 0.005, 0.005);
+    H4.scene.position.set(-10, 0.78, 0);
+    H4.scene.scale.set(0.005, 0.005, 0.005);
 
     crown.scene.position.set(0.5, 2, 206);
     crown.scene.scale.set(1.5, 1.5, 1.5);
@@ -203,14 +211,14 @@ gltfLoader.load(
       let delta = clock.getDelta() * 0.5;
       
       mixer1.update(delta);
-      mixer2.update(delta);
 
       H2.scene.rotation.y -= 0.05;
-      isCollision(H2);
+      isCollision(H2.scene.children[0].children[0].children[0].children[9].children[0]);
       H3.scene.rotation.x += 0.01;
-      obstacle.scene.rotation.y += 0.01;
-      H4.scene.rotation.y -= 0.05;
-      isCollision(H4);
+      isCollision(H3.scene.children[0].children[0].children[0].children[9].children[0]);
+      H4.scene.rotation.y += 0.01;
+      H5.scene.rotation.y -= 0.05;
+      isCollision(H5.scene.children[0].children[0].children[0].children[9].children[0]);
 
       renderer.render(scene, camera);
     };
