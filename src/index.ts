@@ -128,19 +128,51 @@ gltfLoader.load(
 //let obstacleType: string[] = ['hammerCol', 'hammerRow', 'hammerThorn', 'plate', 'crown'];
 
   const mainLoader = async () => {
-    const [obs1, obs2, obs3, obs4, obs5, crown, entrance] = await Promise.all([
-      gltfLoader.loadAsync('./models/hammer_1.glb'),
+    const [
+      obs1, obs2, obs3, obs4, obs5,  // stage 1
+      obs6, obs7, obs8, obs9, obs10,  // stage 2
+      obs11, obs12, obs13, obs14, obs15, // stage 3
+      obs16, obs17, obs18, obs19, // stage 4
+      obs20, obs21, // stage 5
+      crown, entrance] = await Promise.all([
+      // 첫번째 stage 장애물
+      gltfLoader.loadAsync('./models/hammer_1.glb'), 
       gltfLoader.loadAsync('./models/hammer_2.glb'),
       gltfLoader.loadAsync('./models/hammer_3.glb'),
       gltfLoader.loadAsync('./models/hammer_4.glb'),
       gltfLoader.loadAsync('./models/hammer_2.glb'),
 
+      // 두번째 stage 장애물
+      gltfLoader.loadAsync('./models/hammer_4.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+      gltfLoader.loadAsync('./models/hammer_1.glb'),
+      
+      // 세번째 stage 장애물
+      gltfLoader.loadAsync('./models/hammer_3.glb'),
+      gltfLoader.loadAsync('./models/hammer_3.glb'),
+      gltfLoader.loadAsync('./models/hammer_4.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+      
+      // 네번째 stage 장애물
+      gltfLoader.loadAsync('./models/hammer_1.glb'),
+      gltfLoader.loadAsync('./models/hammer_4.glb'),
+      gltfLoader.loadAsync('./models/hammer_4.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+
+      // 다섯번째 stage 장애물
+      gltfLoader.loadAsync('./models/hammer_3.glb'),
+      gltfLoader.loadAsync('./models/hammer_3.glb'),
+
+      // 왕관, 입장문
       gltfLoader.loadAsync('./models/crown.glb'),
       gltfLoader.loadAsync('./models/entrance.glb'),
     ]);
 
-    // 충돌 감지 위원회 함수
-    function isCollision(collisionPoint:Object3D): void{
+    // 충돌 감지 위원회
+    function isCollision(collisionPoint: Object3D): void{
       let target = new THREE.Vector3();
 
       // 캐릭터의 중앙 좌표와 장애물의 특정 좌표가 일치하게 되면 충돌한다.
@@ -162,7 +194,7 @@ gltfLoader.load(
       hammer.scene.position.set(x, y, z);
       hammer.scene.scale.set(4, 4, 4);
 
-      // 망치에 적용되어있는 애니메이션을 실행시키기 위한 mixer 함수
+      // 망치에 적용되어있는 애니메이션을 실행시키기 위한 mixer변수
       const mixer = new THREE.AnimationMixer(hammer.scene);
       mixer.clipAction(hammer.animations[0]).play();
 
@@ -199,13 +231,39 @@ gltfLoader.load(
     // 망치 type1의 애니메이션을 실행시키키 위한 시간 변수
     const clock = new THREE.Clock();
 
-    // 첫번째 칸 장애물들 생성
-    const mixer1 = makeHammerType_1(obs1, 0, 1.5, 0);
-    makeHammerType_2_3_4(obs2, 2, 10, 1, 10);    
-    makeHammerType_2_3_4(obs3, 3, 0, 10, 20)
-    makeHammerType_2_3_4(obs4, 4, -10, 0.78, 0);
-    makeHammerType_2_3_4(obs5, 2, -10, 1, 10);
+    // 1 stage 장애물들 생성
+    // makeHammerType_2_3_4(망치, 망치type, x, y, z)
+    // xyz는 장애물 설치 지점
+    const mixer1 = makeHammerType_1(obs1, -8, 1.5, 3);
+    makeHammerType_2_3_4(obs2, 2, 4, 1, 10);    
+    makeHammerType_2_3_4(obs3, 3, 0, 10, 20);
+    makeHammerType_2_3_4(obs4, 4, -9, 0.78, 0);
+    makeHammerType_2_3_4(obs5, 2, -8, 1, 10);
 
+    // 2 stage 장애물들 생성
+    makeHammerType_2_3_4(obs6, 4, 0, 0.78, 40);
+    makeHammerType_2_3_4(obs7, 2, 9, 1, 41);
+    makeHammerType_2_3_4(obs8, 2, 5, 1, 50); 
+    makeHammerType_2_3_4(obs9, 2, -10, 1, 46); 
+    const mixer2 = makeHammerType_1(obs10, -25, 1.5, 36);
+
+    // 3 stage 장애물들 생성
+    makeHammerType_2_3_4(obs11, 3, -6, 10, 88);
+    makeHammerType_2_3_4(obs12, 3, 5, 10, 83);
+    makeHammerType_2_3_4(obs13, 4, -5, 0.78, 77);
+    makeHammerType_2_3_4(obs14, 2, 5, 1, 69);    
+    makeHammerType_2_3_4(obs15, 2, 11, 1, 77);    
+
+    // 4 stage 장애물들 생성
+    const mixer3 = makeHammerType_1(obs16, -25, 1.5, 103);
+    makeHammerType_2_3_4(obs17, 4, -5, 0.78, 114);
+    makeHammerType_2_3_4(obs18, 4, 3, 0.78, 105);
+    makeHammerType_2_3_4(obs19, 2, 1, 1, 118);    
+
+    // 5 stage 장애물들 생성
+    makeHammerType_2_3_4(obs20, 3, 5, 10, 137);
+    makeHammerType_2_3_4(obs21, 3, -5, 10, 142);
+    
     // 왕관, 입장문 생성
     scene.add(crown.scene);
     scene.add(entrance.scene);
@@ -213,10 +271,6 @@ gltfLoader.load(
     crown.scene.scale.set(1.5, 1.5, 1.5);
     entrance.scene.position.set(40, 2.5, 40);
     entrance.scene.scale.set(0.5, 0.5, 0.5);
-
-
-    console.log(obs4);
-    
 
     // 모든 장애물을 움직이게 하고 충돌을 감지하는 함수
     const animate = () => {
@@ -227,22 +281,79 @@ gltfLoader.load(
 
       // 망치 type1 관련 함수
       let delta = clock.getDelta() * 0.5;
-      mixer1.update(delta);
+      mixer1.update(delta); // 첫번째 stage
+      mixer2.update(delta); // 두번째 stage
+      mixer3.update(delta); // 네번째 stage
 
-      // 첫번째 칸 장애물들
-      obs2.scene.rotation.y -= 0.05;
+
+      // 1 stage 장애물들 애니메이션 실행 및 충돌감지
+      obs2.scene.rotation.y -= 0.05; // 수평 회전 망치 장애물
       isCollision(obs2.scene.children[0].children[0].children[0].children[9].children[0]);
-      
-      obs3.scene.rotation.x += 0.01;
-      isCollision(obs3.scene.children[0].children[0].children[0].children[9].children[0]);      
-    
-      obs4.scene.rotation.y += 0.01;
+      isCollision(obs2.scene.children[0].children[0].children[0].children[12].children[0]);
+      obs3.scene.rotation.x += 0.03; // 가시 달린 장애물
+      isCollision(obs3.scene.children[0].children[0].children[0].children[7].children[0]);      
+      isCollision(obs3.scene.children[0].children[0].children[0].children[5].children[0]);      
+      isCollision(obs3.scene.children[0].children[0].children[0].children[8].children[0]);      
+      obs4.scene.rotation.y += 0.06; // 접시 모양 장애물
       isCollision(obs4.scene.children[0].children[0].children[0].children[13].children[0]);
-      
-      obs5.scene.rotation.y -= 0.05;
+      isCollision(obs4.scene.children[0].children[0].children[0].children[14].children[0]);
+      obs5.scene.rotation.y += 0.05; // 수평 회전 망치 장애물
       isCollision(obs5.scene.children[0].children[0].children[0].children[9].children[0]);
+      isCollision(obs5.scene.children[0].children[0].children[0].children[12].children[0]);
 
-      // 두번째 칸 장애물들
+      // 2 stage 장애물들 애니메이션 실행 및 충돌감지
+      obs6.scene.rotation.y += 0.1; // 접시 모양 장애물
+      isCollision(obs6.scene.children[0].children[0].children[0].children[13].children[0]);
+      isCollision(obs6.scene.children[0].children[0].children[0].children[14].children[0]);
+      obs7.scene.rotation.y += 0.08; // 수평 회전 망치 장애물
+      isCollision(obs7.scene.children[0].children[0].children[0].children[9].children[0]);
+      isCollision(obs7.scene.children[0].children[0].children[0].children[12].children[0]);
+      obs8.scene.rotation.y -= 0.09; // 수평 회전 망치 장애물
+      isCollision(obs8.scene.children[0].children[0].children[0].children[9].children[0]);
+      isCollision(obs8.scene.children[0].children[0].children[0].children[12].children[0]);
+      obs9.scene.rotation.y += 0.1; // 수평 회전 망치 장애물
+      isCollision(obs9.scene.children[0].children[0].children[0].children[9].children[0]);
+      isCollision(obs9.scene.children[0].children[0].children[0].children[12].children[0]);
+
+      // 3 stage 장애물들 애니메이션 실행 및 충돌감지
+      obs11.scene.rotation.x += 0.07; // 가시 달린 장애물
+      isCollision(obs11.scene.children[0].children[0].children[0].children[7].children[0]);      
+      isCollision(obs11.scene.children[0].children[0].children[0].children[5].children[0]);      
+      isCollision(obs11.scene.children[0].children[0].children[0].children[8].children[0]);      
+      obs12.scene.rotation.x -= 0.06; // 가시 달린 장애물
+      isCollision(obs12.scene.children[0].children[0].children[0].children[7].children[0]);      
+      isCollision(obs12.scene.children[0].children[0].children[0].children[5].children[0]);      
+      isCollision(obs12.scene.children[0].children[0].children[0].children[8].children[0]);      
+      obs13.scene.rotation.y += 0.18; // 접시 모양 장애물
+      isCollision(obs13.scene.children[0].children[0].children[0].children[13].children[0]);
+      isCollision(obs13.scene.children[0].children[0].children[0].children[14].children[0]);
+      obs14.scene.rotation.y -= 0.07; // 수평 회전 망치 장애물
+      isCollision(obs14.scene.children[0].children[0].children[0].children[9].children[0]);
+      isCollision(obs14.scene.children[0].children[0].children[0].children[12].children[0]);
+      obs15.scene.rotation.y -= 0.08; // 수평 회전 망치 장애물
+      isCollision(obs15.scene.children[0].children[0].children[0].children[9].children[0]);
+      isCollision(obs15.scene.children[0].children[0].children[0].children[12].children[0]);
+      
+      // 4 stage 장애물들 애니메이션 실행 및 충돌감지
+      obs17.scene.rotation.y += 0.13; // 접시 모양 장애물
+      isCollision(obs17.scene.children[0].children[0].children[0].children[13].children[0]);
+      isCollision(obs17.scene.children[0].children[0].children[0].children[14].children[0]);
+      obs18.scene.rotation.y += 0.15; // 접시 모양 장애물
+      isCollision(obs18.scene.children[0].children[0].children[0].children[13].children[0]);
+      isCollision(obs18.scene.children[0].children[0].children[0].children[14].children[0]);
+      obs19.scene.rotation.y -= 0.08; // 수평 회전 망치 장애물
+      isCollision(obs19.scene.children[0].children[0].children[0].children[9].children[0]);
+      isCollision(obs19.scene.children[0].children[0].children[0].children[12].children[0]);
+
+      // 5 stage 장애물들 애니메이션 실행 및 충돌감지
+      obs20.scene.rotation.x += 0.06; // 가시 달린 장애물
+      isCollision(obs20.scene.children[0].children[0].children[0].children[7].children[0]);      
+      isCollision(obs20.scene.children[0].children[0].children[0].children[5].children[0]);      
+      isCollision(obs20.scene.children[0].children[0].children[0].children[8].children[0]);  
+      obs21.scene.rotation.x += 0.04; // 가시 달린 장애물
+      isCollision(obs21.scene.children[0].children[0].children[0].children[7].children[0]);      
+      isCollision(obs21.scene.children[0].children[0].children[0].children[5].children[0]);      
+      isCollision(obs21.scene.children[0].children[0].children[0].children[8].children[0]);  
 
       renderer.render(scene, camera);
     };
