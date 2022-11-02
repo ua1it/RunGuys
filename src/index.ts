@@ -279,6 +279,12 @@ gltfLoader.load(
       
       requestAnimationFrame(animate);
 
+     
+// 작업할 때 편하라고 주석처리 했음
+// 다른 에니메이션 & 충돌 실험해보고싶으면 여기 전체 주석 해제하면 됩니다.
+
+
+/*
       // 망치 type1 관련 함수
       let delta = clock.getDelta() * 0.5;
       mixer1.update(delta); // 첫번째 stage
@@ -291,9 +297,9 @@ gltfLoader.load(
       isCollision(obs2.scene.children[0].children[0].children[0].children[9].children[0]);
       isCollision(obs2.scene.children[0].children[0].children[0].children[12].children[0]);
       obs3.scene.rotation.x += 0.03; // 가시 달린 장애물
-      isCollision(obs3.scene.children[0].children[0].children[0].children[7].children[0]);      
-      isCollision(obs3.scene.children[0].children[0].children[0].children[5].children[0]);      
-      isCollision(obs3.scene.children[0].children[0].children[0].children[8].children[0]);      
+      isCollision(obs3.scene.children[0].children[0].children[0].children[7].children[0]);
+      isCollision(obs3.scene.children[0].children[0].children[0].children[5].children[0]);
+      isCollision(obs3.scene.children[0].children[0].children[0].children[8].children[0]);
       obs4.scene.rotation.y += 0.06; // 접시 모양 장애물
       isCollision(obs4.scene.children[0].children[0].children[0].children[13].children[0]);
       isCollision(obs4.scene.children[0].children[0].children[0].children[14].children[0]);
@@ -317,13 +323,13 @@ gltfLoader.load(
 
       // 3 stage 장애물들 애니메이션 실행 및 충돌감지
       obs11.scene.rotation.x += 0.07; // 가시 달린 장애물
-      isCollision(obs11.scene.children[0].children[0].children[0].children[7].children[0]);      
-      isCollision(obs11.scene.children[0].children[0].children[0].children[5].children[0]);      
-      isCollision(obs11.scene.children[0].children[0].children[0].children[8].children[0]);      
+      isCollision(obs11.scene.children[0].children[0].children[0].children[7].children[0]);
+      isCollision(obs11.scene.children[0].children[0].children[0].children[5].children[0]);
+      isCollision(obs11.scene.children[0].children[0].children[0].children[8].children[0]);
       obs12.scene.rotation.x -= 0.06; // 가시 달린 장애물
-      isCollision(obs12.scene.children[0].children[0].children[0].children[7].children[0]);      
-      isCollision(obs12.scene.children[0].children[0].children[0].children[5].children[0]);      
-      isCollision(obs12.scene.children[0].children[0].children[0].children[8].children[0]);      
+      isCollision(obs12.scene.children[0].children[0].children[0].children[7].children[0]);
+      isCollision(obs12.scene.children[0].children[0].children[0].children[5].children[0]);
+      isCollision(obs12.scene.children[0].children[0].children[0].children[8].children[0]);
       obs13.scene.rotation.y += 0.18; // 접시 모양 장애물
       isCollision(obs13.scene.children[0].children[0].children[0].children[13].children[0]);
       isCollision(obs13.scene.children[0].children[0].children[0].children[14].children[0]);
@@ -347,13 +353,17 @@ gltfLoader.load(
 
       // 5 stage 장애물들 애니메이션 실행 및 충돌감지
       obs20.scene.rotation.x += 0.06; // 가시 달린 장애물
-      isCollision(obs20.scene.children[0].children[0].children[0].children[7].children[0]);      
-      isCollision(obs20.scene.children[0].children[0].children[0].children[5].children[0]);      
-      isCollision(obs20.scene.children[0].children[0].children[0].children[8].children[0]);  
+      isCollision(obs20.scene.children[0].children[0].children[0].children[7].children[0]);
+      isCollision(obs20.scene.children[0].children[0].children[0].children[5].children[0]);
+      isCollision(obs20.scene.children[0].children[0].children[0].children[8].children[0]);
       obs21.scene.rotation.x += 0.04; // 가시 달린 장애물
-      isCollision(obs21.scene.children[0].children[0].children[0].children[7].children[0]);      
-      isCollision(obs21.scene.children[0].children[0].children[0].children[5].children[0]);      
-      isCollision(obs21.scene.children[0].children[0].children[0].children[8].children[0]);  
+      isCollision(obs21.scene.children[0].children[0].children[0].children[7].children[0]);
+      isCollision(obs21.scene.children[0].children[0].children[0].children[5].children[0]);
+      isCollision(obs21.scene.children[0].children[0].children[0].children[8].children[0]);
+
+      
+*/
+
 
       renderer.render(scene, camera);
     };
