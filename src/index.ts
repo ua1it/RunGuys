@@ -272,6 +272,8 @@ gltfLoader.load(
     entrance.scene.position.set(40, 2.5, 40);
     entrance.scene.scale.set(0.5, 0.5, 0.5);
 
+    console.log(obs1);
+    
     // 모든 장애물을 움직이게 하고 충돌을 감지하는 함수
     const animate = () => {
       // console.log(nice.getWorldPosition(target)); //망치 위치 확인
