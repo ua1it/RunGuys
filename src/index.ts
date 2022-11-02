@@ -1,7 +1,7 @@
 import { KeyDisplay } from "./utils";
 import { CharacterControls } from "./characterControls";
 import * as THREE from "three";
-import { CameraHelper } from "three";
+import { AnimationMixer, CameraHelper } from "three";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // SCENE
@@ -129,14 +129,16 @@ gltfLoader.load(
 
 
   const mainLoader = async () => {
-    const [hammer_1, hammer_2, hammer_3, obstacle, crown, entrance, hammer_4] = await Promise.all([
+    const [H1, H2, H3, H4, H5, obstacle, crown, entrance] = await Promise.all([
       gltfLoader.loadAsync('./models/hammer_1.glb'),
       gltfLoader.loadAsync('./models/hammer_2.glb'),
       gltfLoader.loadAsync('./models/hammer_3.glb'),
+      gltfLoader.loadAsync('./models/hammer_2.glb'),
+      gltfLoader.loadAsync('./models/hammer_1.glb'),
+
       gltfLoader.loadAsync('./models/obstacle.glb'),
       gltfLoader.loadAsync('./models/crown.glb'),
       gltfLoader.loadAsync('./models/entrance.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
     ]);
 
     function isCollision(hammer:GLTF): void{
@@ -149,34 +151,41 @@ gltfLoader.load(
         characterControls.switchBackToggle();
       }
     }
+
+    function makeHammerType_1(hammer: GLTF, x: number, y: number, z: number) : AnimationMixer {
+      scene.add(hammer.scene);
+
+      const mixer = new THREE.AnimationMixer(hammer.scene);
+      mixer.clipAction(hammer.animations[0]).play();
+
+      hammer.scene.position.set(x, y, z);
+      hammer.scene.scale.set(4, 4, 4);
+
+      return mixer;
+    } 
     
     function makeHammerType_2(hammer: GLTF, x: number, y: number, z: number): void {
-      scene.add(hammer.scene);
+      scene.add(hammer.scene); 
 
       hammer.scene.position.set(x, y, z);
       hammer.scene.scale.set(0.005, 0.005, 0.005);
     }
-    
-    scene.add(hammer_1.scene); 
-    console.log(typeof hammer_1);
-    
-    let clock = new THREE.Clock();
-    const mixer = new THREE.AnimationMixer(hammer_1.scene);
-    mixer.clipAction(hammer_1.animations[0]).play();
 
-    makeHammerType_2(hammer_2, 10, 1, 10);
-    makeHammerType_2(hammer_4,-10,1,10)
+    const clock = new THREE.Clock();
+
+    // 첫번째 칸 장애물들
+    const mixer1 = makeHammerType_1(H1, 0, 1.5, 0);
+    makeHammerType_2(H2, 10, 1, 10);
+    makeHammerType_2(H4, -10, 1, 10)
+    const mixer2 = makeHammerType_1(H5, 0, 1.5, 2);
     
-    scene.add(hammer_3.scene);
+    scene.add(H3.scene);
     scene.add(obstacle.scene);
     scene.add(crown.scene);
     scene.add(entrance.scene);
-    
-    hammer_1.scene.position.set(0, 1.5, 0);
-    hammer_1.scene.scale.set(4, 4, 4);   
 
-    hammer_3.scene.position.set(0, 10, 20);
-    hammer_3.scene.scale.set(0.003, 0.003, 0.003);        
+    H3.scene.position.set(0, 10, 20);
+    H3.scene.scale.set(0.003, 0.003, 0.003);        
 
     obstacle.scene.position.set(-10, 0.78, 0);
     obstacle.scene.scale.set(0.005, 0.005, 0.005);
@@ -187,23 +196,21 @@ gltfLoader.load(
     entrance.scene.position.set(40, 2.5, 40);
     entrance.scene.scale.set(0.5, 0.5, 0.5);
 
-    
     const animate = () => {
-      requestAnimationFrame(animate);
-
-      let delta = clock.getDelta()*0.5;
-      mixer.update(delta);
-
       // console.log(nice.getWorldPosition(target)); //망치
       //console.log(characterControls.model.position); //캐릭터
+      requestAnimationFrame(animate);
+      let delta = clock.getDelta() * 0.5;
       
-      hammer_2.scene.rotation.y -= 0.05;
-      isCollision(hammer_2);
-        
-      hammer_3.scene.rotation.x += 0.01;
+      mixer1.update(delta);
+      mixer2.update(delta);
+
+      H2.scene.rotation.y -= 0.05;
+      isCollision(H2);
+      H3.scene.rotation.x += 0.01;
       obstacle.scene.rotation.y += 0.01;
-      hammer_4.scene.rotation.y -= 0.05;
-      isCollision(hammer_4);
+      H4.scene.rotation.y -= 0.05;
+      isCollision(H4);
 
       renderer.render(scene, camera);
     };
