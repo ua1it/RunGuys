@@ -2,7 +2,7 @@ import { KeyDisplay } from "./utils";
 import { CharacterControls } from "./characterControls";
 import * as THREE from "three";
 import { CameraHelper } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 // SCENE
 const scene = new THREE.Scene();
@@ -138,6 +138,24 @@ gltfLoader.load(
       gltfLoader.loadAsync('./models/entrance.glb'),
       gltfLoader.loadAsync('./models/hammer_2.glb'),
     ]);
+
+    function isCollision(hammer:GLTF): void{
+      let nice = hammer.scene.children[0].children[0].children[0].children[9].children[0];
+      let target = new THREE.Vector3();
+
+      if (Math.ceil(characterControls.model.position.x) == Math.ceil(nice.getWorldPosition(target).x)
+        && Math.ceil(characterControls.model.position.z) == Math.ceil(nice.getWorldPosition(target).z)) {
+        console.log('충돌^_^');
+        characterControls.switchBackToggle();
+      }
+    }
+    
+    function makeHammerType_2(hammer: GLTF, x: number, y: number, z: number): void {
+      scene.add(hammer.scene);
+
+      hammer.scene.position.set(x, y, z);
+      hammer.scene.scale.set(0.005, 0.005, 0.005);
+    }
     
     scene.add(hammer_1.scene); 
     console.log(typeof hammer_1);
@@ -146,20 +164,16 @@ gltfLoader.load(
     const mixer = new THREE.AnimationMixer(hammer_1.scene);
     mixer.clipAction(hammer_1.animations[0]).play();
 
-    scene.add(hammer_2.scene);
-    let nice = hammer_2.scene.children[0].children[0].children[0].children[9].children[0];
+    makeHammerType_2(hammer_2, 10, 1, 10);
+    makeHammerType_2(hammer_4,-10,1,10)
     
     scene.add(hammer_3.scene);
     scene.add(obstacle.scene);
     scene.add(crown.scene);
     scene.add(entrance.scene);
-    scene.add(hammer_4.scene);
     
     hammer_1.scene.position.set(0, 1.5, 0);
     hammer_1.scene.scale.set(4, 4, 4);   
-    
-    hammer_2.scene.position.set(10, 1, 10);
-    hammer_2.scene.scale.set(0.005, 0.005, 0.005);
 
     hammer_3.scene.position.set(0, 10, 20);
     hammer_3.scene.scale.set(0.003, 0.003, 0.003);        
@@ -173,8 +187,6 @@ gltfLoader.load(
     entrance.scene.position.set(40, 2.5, 40);
     entrance.scene.scale.set(0.5, 0.5, 0.5);
 
-    hammer_4.scene.position.set(-10, 1, 10);
-    hammer_4.scene.scale.set(0.005, 0.005, 0.005);
     
     const animate = () => {
       requestAnimationFrame(animate);
@@ -182,21 +194,16 @@ gltfLoader.load(
       let delta = clock.getDelta()*0.5;
       mixer.update(delta);
 
-      hammer_2.scene.rotation.y -= 0.05;
-      let target = new THREE.Vector3();
       // console.log(nice.getWorldPosition(target)); //망치
       //console.log(characterControls.model.position); //캐릭터
-
-
-      if (Math.ceil(characterControls.model.position.x) == Math.ceil(nice.getWorldPosition(target).x)
-        && Math.ceil(characterControls.model.position.z) == Math.ceil(nice.getWorldPosition(target).z)) {
-        console.log('충돌^_^');
-        characterControls.switchBackToggle();
-      }
+      
+      hammer_2.scene.rotation.y -= 0.05;
+      isCollision(hammer_2);
         
       hammer_3.scene.rotation.x += 0.01;
       obstacle.scene.rotation.y += 0.01;
       hammer_4.scene.rotation.y -= 0.05;
+      isCollision(hammer_4);
 
       renderer.render(scene, camera);
     };
