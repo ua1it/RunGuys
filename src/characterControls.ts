@@ -84,16 +84,15 @@ export class CharacterControls {
     // running
     // walking
     // jump
-    console.log(this.toggleFinish);
+    //console.log(this.toggleFinish);
     var play = "";
     if (this.toggleBack) {
       play = "backward";
     } else if (directionPressed && this.toggleRun && !this.toggleJump) {
       play = "running";
-    } 
-    else if (this.toggleFinish) {
+    } else if (this.toggleFinish) {
       play = "Cheering";
-    }else if (directionPressed && !this.toggleJump) {
+    } else if (directionPressed && !this.toggleJump) {
       play = "walking";
     } else {
       if (this.toggleJump) {
@@ -104,14 +103,13 @@ export class CharacterControls {
     }
 
     if (this.currentAction != play) {
-      
-        const toPlay = this.animationsMap.get(play);
-        const current = this.animationsMap.get(this.currentAction);
+      const toPlay = this.animationsMap.get(play);
+      const current = this.animationsMap.get(this.currentAction);
 
-        current.fadeOut(this.fadeDuration);
-        toPlay.reset().fadeIn(this.fadeDuration).play();
+      current.fadeOut(this.fadeDuration);
+      toPlay.reset().fadeIn(this.fadeDuration).play();
 
-        this.currentAction = play;
+      this.currentAction = play;
     }
 
     this.mixer.update(delta * 1.4);
@@ -121,8 +119,154 @@ export class CharacterControls {
         this.model.position.y -= 0.02;
       }
 
-      //문 아닌곳 통과 X
+      //벽 통과 못하게
       if (
+        //왼쪽 벽
+        (this.model.position.z >= -6.691516513144314 &&
+          this.model.position.z <= 27.340178765946963 &&
+          this.model.position.x >= 21.127514239970655 &&
+          this.model.position.x <= 22) ||
+        (this.model.position.z >= 155.34126319322462 &&
+          this.model.position.z <= 234.9772493195543 &&
+          this.model.position.x >= 8.737343909083366 &&
+          this.model.position.x <= 9)
+      ) {
+        console.log(
+          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        );
+        // calculate towards camera direction
+        var angleYCameraDirection = Math.atan2(
+          this.camera.position.x - this.model.position.x,
+          this.camera.position.z - this.model.position.z
+        );
+        // diagonal movement angle offset
+        var directionOffset = this.directionOffset(keysPressed);
+
+        // rotate model
+        this.rotateQuarternion.setFromAxisAngle(
+          this.rotateAngle,
+          directionOffset
+        );
+        this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
+
+        // calculate direction
+        this.camera.getWorldDirection(this.walkDirection);
+        this.walkDirection.y = 0;
+        this.walkDirection.normalize();
+        this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+
+        // run/walk velocity
+        const velocity = this.runVelocity;
+
+        // move model & camera
+        const moveX = this.walkDirection.x * velocity * delta;
+        const moveZ = this.walkDirection.z * velocity * delta;
+        this.model.position.z += moveZ;
+        if (moveX >= 0) {
+          this.updateCameraTarget(0, moveZ, this.currentAction);
+        } else {
+          const moveX = this.walkDirection.x * velocity * delta;
+          this.model.position.x += moveX;
+          this.updateCameraTarget(moveX, moveZ, this.currentAction);
+        }
+      } else if (
+        //오른쪽 벽
+        (this.model.position.z >= -7.104209821881118 &&
+          this.model.position.z <= 27.78583500748067 &&
+          this.model.position.x >= -20.877820234198566 &&
+          this.model.position.x <= -20.245053268539564) ||
+        (this.model.position.z >= 155.23209798775028 &&
+          this.model.position.z <= 235.71907515532834 &&
+          this.model.position.x >= -8 &&
+          this.model.position.x <= -7.299846015557385)
+      ) {
+        console.log(
+          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        );
+
+        // calculate towards camera direction
+        var angleYCameraDirection = Math.atan2(
+          this.camera.position.x - this.model.position.x,
+          this.camera.position.z - this.model.position.z
+        );
+        // diagonal movement angle offset
+        var directionOffset = this.directionOffset(keysPressed);
+
+        // rotate model
+        this.rotateQuarternion.setFromAxisAngle(
+          this.rotateAngle,
+          directionOffset
+        );
+        this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
+
+        // calculate direction
+        this.camera.getWorldDirection(this.walkDirection);
+        this.walkDirection.y = 0;
+        this.walkDirection.normalize();
+        this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+
+        // run/walk velocity
+        const velocity = this.runVelocity;
+
+        // move model & camera
+        const moveX = this.walkDirection.x * velocity * delta;
+        const moveZ = this.walkDirection.z * velocity * delta;
+        this.model.position.z += moveZ;
+        if (moveX < 0) {
+          this.updateCameraTarget(0, moveZ, this.currentAction);
+        } else {
+          const moveX = this.walkDirection.x * velocity * delta;
+          this.model.position.x += moveX;
+          this.updateCameraTarget(moveX, moveZ, this.currentAction);
+        }
+      } else if (
+        //맨뒤 벽
+        this.model.position.x >= -20.476910797588232 &&
+        this.model.position.x <= 21.58606668906287 &&
+        this.model.position.z >= -8 &&
+        this.model.position.z <= -7.080379129773091
+      ) {
+        // console.log(
+        //   "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        // );
+        // calculate towards camera direction
+        var angleYCameraDirection = Math.atan2(
+          this.camera.position.x - this.model.position.x,
+          this.camera.position.z - this.model.position.z
+        );
+        // diagonal movement angle offset
+        var directionOffset = this.directionOffset(keysPressed);
+
+        // rotate model
+        this.rotateQuarternion.setFromAxisAngle(
+          this.rotateAngle,
+          directionOffset
+        );
+        this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
+
+        // calculate direction
+        this.camera.getWorldDirection(this.walkDirection);
+        this.walkDirection.y = 0;
+        this.walkDirection.normalize();
+        this.walkDirection.applyAxisAngle(this.rotateAngle, directionOffset);
+
+        // run/walk velocity
+        const velocity = this.runVelocity;
+
+        // move model & camera
+        const moveX = this.walkDirection.x * velocity * delta;
+        const moveZ = this.walkDirection.z * velocity * delta;
+        this.model.position.x += moveX;
+        if (moveZ <= 0) {
+          this.updateCameraTarget(moveX, 0, this.currentAction);
+        } else {
+          const moveZ = this.walkDirection.x * velocity * delta;
+          this.model.position.z += moveZ;
+          this.updateCameraTarget(moveX, moveZ, this.currentAction);
+        }
+      }
+      //문 아닌곳 통과 X
+      else if (
         (this.model.position.x >= 3.3166774561833825 &&
           this.model.position.x <= 20.81912740053712 &&
           this.model.position.z >= 27.319982458157712 &&
@@ -162,11 +306,15 @@ export class CharacterControls {
         (this.model.position.x >= -8.773543344138218 &&
           this.model.position.x <= -2.4190768768399247 &&
           this.model.position.z >= 152.06569332622134 &&
-          this.model.position.z <= 153)
+          this.model.position.z <= 153) ||
+        (this.model.position.x >= -7.324477274625931 &&
+          this.model.position.x <= 7.623625080432972 &&
+          this.model.position.z >= 235.44976183662368 &&
+          this.model.position.z <= 236)
       ) {
-        console.log(
-          "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        );
+        // console.log(
+        //   "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        // );
         // calculate towards camera direction
         var angleYCameraDirection = Math.atan2(
           this.camera.position.x - this.model.position.x,
@@ -203,6 +351,7 @@ export class CharacterControls {
           this.updateCameraTarget(moveX, moveZ, this.currentAction);
         }
       } else {
+        // 이동할수 있는 곳
         // calculate towards camera direction
         var angleYCameraDirection = Math.atan2(
           this.camera.position.x - this.model.position.x,
@@ -318,7 +467,6 @@ export class CharacterControls {
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
     }
     if (this.currentAction == "finish") {
-      
       console.log("finish");
     }
   }
