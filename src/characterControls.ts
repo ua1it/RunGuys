@@ -92,7 +92,7 @@ export class CharacterControls {
       play = "running";
     } 
     else if (this.toggleFinish) {
-      play = "Cheering";
+      play = "dancing";
     }else if (directionPressed && !this.toggleJump) {
       play = "walking";
     } else {
