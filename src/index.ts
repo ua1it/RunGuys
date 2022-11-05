@@ -90,7 +90,7 @@ const gltfLoader = new GLTFLoader();
 let mixer: THREE.AnimationMixer;
 
 gltfLoader.load(
-  "models/untitled.glb",
+  "models/map.glb",
   (gltf) => {
     console.log("success");
     console.log(gltf);
@@ -102,18 +102,6 @@ gltfLoader.load(
     gltf.animations.forEach((clip) => {
       mixer.clipAction(clip).play();
     });
-
-    let Cube = gltf.scene.children[5];
-    let Cube002 = gltf.scene.children[6];
-    let Cube003 = gltf.scene.children[7];
-
-    console.log("Position");
-    console.log(Cube.getWorldPosition(Cube.position));
-    //Vector3 {x: 22.379180908203125, y: 0.33713316917419434, z: 11.690906524658203}
-    console.log(Cube002.getWorldPosition(Cube002.position));
-    //Vector3 {x: -22.561954498291016, y: -0.2211005687713623, z: 11.767125129699707}
-    console.log(Cube003.getWorldPosition(Cube003.position));
-    //Vector3 {x: 0.8326816558837891, y: -2.900982618331909, z: -7.809866428375244}
   },
   function (xhr) {
     console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
@@ -127,166 +115,196 @@ gltfLoader.load(
 //obstacle
 //let obstacleType: string[] = ['hammerCol', 'hammerRow', 'hammerThorn', 'plate', 'crown'];
 
-  const mainLoader = async () => {
-    const [
-      obs1, obs2, obs3, obs4, obs5,  // stage 1
-      obs6, obs7, obs8, obs9, obs10,  // stage 2
-      obs11, obs12, obs13, obs14, obs15, // stage 3
-      obs16, obs17, obs18, obs19, // stage 4
-      obs20, obs21, // stage 5
-      crown, entrance] = await Promise.all([
-      // 첫번째 stage 장애물
-      gltfLoader.loadAsync('./models/hammer_1.glb'), 
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-      gltfLoader.loadAsync('./models/hammer_3.glb'),
-      gltfLoader.loadAsync('./models/hammer_4.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
+const mainLoader = async () => {
+  const [
+    obs1,
+    obs2,
+    obs3,
+    obs4,
+    obs5, // stage 1
+    obs6,
+    obs7,
+    obs8,
+    obs9,
+    obs10, // stage 2
+    obs11,
+    obs12,
+    obs13,
+    obs14,
+    obs15, // stage 3
+    obs16,
+    obs17,
+    obs18,
+    obs19, // stage 4
+    obs20,
+    obs21, // stage 5
+    crown,
+    entrance,
+  ] = await Promise.all([
+    // 첫번째 stage 장애물
+    gltfLoader.loadAsync("./models/hammer_1.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
+    gltfLoader.loadAsync("./models/hammer_3.glb"),
+    gltfLoader.loadAsync("./models/hammer_4.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
 
-      // 두번째 stage 장애물
-      gltfLoader.loadAsync('./models/hammer_4.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-      gltfLoader.loadAsync('./models/hammer_1.glb'),
-      
-      // 세번째 stage 장애물
-      gltfLoader.loadAsync('./models/hammer_3.glb'),
-      gltfLoader.loadAsync('./models/hammer_3.glb'),
-      gltfLoader.loadAsync('./models/hammer_4.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
-      
-      // 네번째 stage 장애물
-      gltfLoader.loadAsync('./models/hammer_1.glb'),
-      gltfLoader.loadAsync('./models/hammer_4.glb'),
-      gltfLoader.loadAsync('./models/hammer_4.glb'),
-      gltfLoader.loadAsync('./models/hammer_2.glb'),
+    // 두번째 stage 장애물
+    gltfLoader.loadAsync("./models/hammer_4.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
+    gltfLoader.loadAsync("./models/hammer_1.glb"),
 
-      // 다섯번째 stage 장애물
-      gltfLoader.loadAsync('./models/hammer_3.glb'),
-      gltfLoader.loadAsync('./models/hammer_3.glb'),
+    // 세번째 stage 장애물
+    gltfLoader.loadAsync("./models/hammer_3.glb"),
+    gltfLoader.loadAsync("./models/hammer_3.glb"),
+    gltfLoader.loadAsync("./models/hammer_4.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
 
-      // 왕관, 입장문
-      gltfLoader.loadAsync('./models/crown.glb'),
-      gltfLoader.loadAsync('./models/entrance.glb'),
-    ]);
+    // 네번째 stage 장애물
+    gltfLoader.loadAsync("./models/hammer_1.glb"),
+    gltfLoader.loadAsync("./models/hammer_4.glb"),
+    gltfLoader.loadAsync("./models/hammer_4.glb"),
+    gltfLoader.loadAsync("./models/hammer_2.glb"),
 
-    // 충돌 감지 위원회
-    function isCollision(collisionPoint: Object3D): void{
-      let target = new THREE.Vector3();
+    // 다섯번째 stage 장애물
+    gltfLoader.loadAsync("./models/hammer_3.glb"),
+    gltfLoader.loadAsync("./models/hammer_3.glb"),
 
-      // 캐릭터의 중앙 좌표와 장애물의 특정 좌표가 일치하게 되면 충돌한다.
-      if (Math.ceil(characterControls.model.position.x) == Math.ceil(collisionPoint.getWorldPosition(target).x)
-        && Math.ceil(characterControls.model.position.z) == Math.ceil(collisionPoint.getWorldPosition(target).z)
-        && collisionPoint.getWorldPosition(target).y <2) {
-        
-        console.log('충돌^_^');
-        // 뒤로 밀려나는 에니메이션 실행
-        characterControls.switchBackToggle();
-      }
+    // 왕관, 입장문
+    gltfLoader.loadAsync("./models/crown.glb"),
+    gltfLoader.loadAsync("./models/entrance.glb"),
+  ]);
+
+  // 충돌 감지 위원회
+  function isCollision(collisionPoint: Object3D): void {
+    let target = new THREE.Vector3();
+
+    // 캐릭터의 중앙 좌표와 장애물의 특정 좌표가 일치하게 되면 충돌한다.
+    if (
+      Math.ceil(characterControls.model.position.x) ==
+        Math.ceil(collisionPoint.getWorldPosition(target).x) &&
+      Math.ceil(characterControls.model.position.z) ==
+        Math.ceil(collisionPoint.getWorldPosition(target).z) &&
+      collisionPoint.getWorldPosition(target).y < 2
+    ) {
+      console.log("충돌^_^");
+      // 뒤로 밀려나는 에니메이션 실행
+      characterControls.switchBackToggle();
     }
+  }
 
-    // 망치 type1 생성함수. 
-    // 수직 회전하는 작은 망치
-    function makeHammerType_1(hammer: GLTF, x: number, y: number, z: number) : AnimationMixer {
-      scene.add(hammer.scene);
+  // 망치 type1 생성함수.
+  // 수직 회전하는 작은 망치
+  function makeHammerType_1(
+    hammer: GLTF,
+    x: number,
+    y: number,
+    z: number
+  ): AnimationMixer {
+    scene.add(hammer.scene);
 
-      hammer.scene.position.set(x, y, z);
-      hammer.scene.scale.set(4, 4, 4);
+    hammer.scene.position.set(x, y, z);
+    hammer.scene.scale.set(4, 4, 4);
 
-      // 망치에 적용되어있는 애니메이션을 실행시키기 위한 mixer변수
-      const mixer = new THREE.AnimationMixer(hammer.scene);
-      mixer.clipAction(hammer.animations[0]).play();
+    // 망치에 적용되어있는 애니메이션을 실행시키기 위한 mixer변수
+    const mixer = new THREE.AnimationMixer(hammer.scene);
+    mixer.clipAction(hammer.animations[0]).play();
 
-      return mixer;
-    } 
+    return mixer;
+  }
 
-    // 망치 type2,3,4 생성 함수
-    function makeHammerType_2_3_4(hammer: GLTF, hammerType: number, x: number, y: number, z: number): void {
-      scene.add(hammer.scene);
-      hammer.scene.position.set(x, y, z);
+  // 망치 type2,3,4 생성 함수
+  function makeHammerType_2_3_4(
+    hammer: GLTF,
+    hammerType: number,
+    x: number,
+    y: number,
+    z: number
+  ): void {
+    scene.add(hammer.scene);
+    hammer.scene.position.set(x, y, z);
 
-      // 각 장애물마다 다른 scale 적용
-      switch (hammerType) {
-        //망치 type2 : 수평 회전하는 망치 
-        case 2:
-          hammer.scene.scale.set(0.005, 0.005, 0.005);
-          break;
-        
-        // 망치 type3 : 가시 달린 큰 장애물
-        case 3:
-          hammer.scene.scale.set(0.003, 0.003, 0.003);
-          break;
-        
-        //망치 type4 : 접시같은 장애물 
-        case 4:
-          hammer.scene.scale.set(0.005, 0.005, 0.005);
-          break;
-        
-        default:
-          break;
-      }
+    // 각 장애물마다 다른 scale 적용
+    switch (hammerType) {
+      //망치 type2 : 수평 회전하는 망치
+      case 2:
+        hammer.scene.scale.set(0.005, 0.005, 0.005);
+        break;
+
+      // 망치 type3 : 가시 달린 큰 장애물
+      case 3:
+        hammer.scene.scale.set(0.003, 0.003, 0.003);
+        break;
+
+      //망치 type4 : 접시같은 장애물
+      case 4:
+        hammer.scene.scale.set(0.005, 0.005, 0.005);
+        break;
+
+      default:
+        break;
     }
+  }
 
-    // 망치 type1의 애니메이션을 실행시키키 위한 시간 변수
-    const clock = new THREE.Clock();
+  // 망치 type1의 애니메이션을 실행시키키 위한 시간 변수
+  const clock = new THREE.Clock();
 
-    // 1 stage 장애물들 생성
-    // makeHammerType_2_3_4(망치, 망치type, x, y, z)
-    // xyz는 장애물 설치 지점
-    const mixer1 = makeHammerType_1(obs1, -8, 1.5, 3);
-    makeHammerType_2_3_4(obs2, 2, 4, 1, 10);    
-    makeHammerType_2_3_4(obs3, 3, 0, 10, 20);
-    makeHammerType_2_3_4(obs4, 4, -9, 0.78, 0);
-    makeHammerType_2_3_4(obs5, 2, -8, 1, 10);
+  // 1 stage 장애물들 생성
+  // makeHammerType_2_3_4(망치, 망치type, x, y, z)
+  // xyz는 장애물 설치 지점
+  const mixer1 = makeHammerType_1(obs1, -8, 1.5, 3);
+  makeHammerType_2_3_4(obs2, 2, 4, 1, 10);
+  makeHammerType_2_3_4(obs3, 3, 0, 10, 20);
+  makeHammerType_2_3_4(obs4, 4, -9, 0.78, 0);
+  makeHammerType_2_3_4(obs5, 2, -8, 1, 10);
 
-    // 2 stage 장애물들 생성
-    makeHammerType_2_3_4(obs6, 4, 0, 0.78, 40);
-    makeHammerType_2_3_4(obs7, 2, 9, 1, 41);
-    makeHammerType_2_3_4(obs8, 2, 5, 1, 50); 
-    makeHammerType_2_3_4(obs9, 2, -10, 1, 46); 
-    const mixer2 = makeHammerType_1(obs10, -25, 1.5, 36);
+  // 2 stage 장애물들 생성
+  makeHammerType_2_3_4(obs6, 4, 0, 0.78, 40);
+  makeHammerType_2_3_4(obs7, 2, 9, 1, 41);
+  makeHammerType_2_3_4(obs8, 2, 5, 1, 50);
+  makeHammerType_2_3_4(obs9, 2, -10, 1, 46);
+  const mixer2 = makeHammerType_1(obs10, -25, 1.5, 36);
 
-    // 3 stage 장애물들 생성
-    makeHammerType_2_3_4(obs11, 3, -6, 10, 88);
-    makeHammerType_2_3_4(obs12, 3, 5, 10, 83);
-    makeHammerType_2_3_4(obs13, 4, -5, 0.78, 77);
-    makeHammerType_2_3_4(obs14, 2, 5, 1, 69);    
-    makeHammerType_2_3_4(obs15, 2, 11, 1, 77);    
+  // 3 stage 장애물들 생성
+  makeHammerType_2_3_4(obs11, 3, -6, 10, 88);
+  makeHammerType_2_3_4(obs12, 3, 5, 10, 83);
+  makeHammerType_2_3_4(obs13, 4, -5, 0.78, 77);
+  makeHammerType_2_3_4(obs14, 2, 5, 1, 69);
+  makeHammerType_2_3_4(obs15, 2, 11, 1, 77);
 
-    // 4 stage 장애물들 생성
-    const mixer3 = makeHammerType_1(obs16, -25, 1.5, 103);
-    makeHammerType_2_3_4(obs17, 4, -5, 0.78, 114);
-    makeHammerType_2_3_4(obs18, 4, 3, 0.78, 105);
-    makeHammerType_2_3_4(obs19, 2, 1, 1, 118);    
+  // 4 stage 장애물들 생성
+  const mixer3 = makeHammerType_1(obs16, -25, 1.5, 103);
+  makeHammerType_2_3_4(obs17, 4, -5, 0.78, 114);
+  makeHammerType_2_3_4(obs18, 4, 3, 0.78, 105);
+  makeHammerType_2_3_4(obs19, 2, 1, 1, 118);
 
-    // 5 stage 장애물들 생성
-    makeHammerType_2_3_4(obs20, 3, 5, 10, 137);
-    makeHammerType_2_3_4(obs21, 3, -5, 10, 142);
-    
-    // 왕관, 입장문 생성
-    scene.add(crown.scene);
-    scene.add(entrance.scene);
-    crown.scene.position.set(0.5, 2, 206);
-    crown.scene.scale.set(1.5, 1.5, 1.5);
-    entrance.scene.position.set(40, 2.5, 40);
-    entrance.scene.scale.set(0.5, 0.5, 0.5);
+  // 5 stage 장애물들 생성
+  makeHammerType_2_3_4(obs20, 3, 5, 10, 137);
+  makeHammerType_2_3_4(obs21, 3, -5, 10, 142);
 
-    console.log(obs1);
-    
-    // 모든 장애물을 움직이게 하고 충돌을 감지하는 함수
-    const animate = () => {
-      // console.log(nice.getWorldPosition(target)); //망치 위치 확인
-      // console.log(characterControls.model.position); //캐릭터 위치 확인
-      
-      requestAnimationFrame(animate);
+  // 왕관, 입장문 생성
+  scene.add(crown.scene);
+  scene.add(entrance.scene);
+  crown.scene.position.set(0.5, 2, 206);
+  crown.scene.scale.set(1.5, 1.5, 1.5);
+  entrance.scene.position.set(40, 2.5, 40);
+  entrance.scene.scale.set(0.5, 0.5, 0.5);
 
-     
-// 작업할 때 편하라고 주석처리 했음
-// 다른 에니메이션 & 충돌 실험해보고싶으면 여기 전체 주석 해제하면 됩니다.
+  console.log(obs1);
 
+  // 모든 장애물을 움직이게 하고 충돌을 감지하는 함수
+  const animate = () => {
+    // console.log(nice.getWorldPosition(target)); //망치 위치 확인
+    // console.log(characterControls.model.position); //캐릭터 위치 확인
 
-/*
+    requestAnimationFrame(animate);
+
+    // 작업할 때 편하라고 주석처리 했음
+    // 다른 에니메이션 & 충돌 실험해보고싶으면 여기 전체 주석 해제하면 됩니다.
+
+    /*
       // 망치 type1 관련 함수
       let delta = clock.getDelta() * 0.5;
       mixer1.update(delta); // 첫번째 stage
@@ -366,12 +384,11 @@ gltfLoader.load(
       
 */
 
-
-      renderer.render(scene, camera);
-    };
-    animate();
+    renderer.render(scene, camera);
   };
-  mainLoader();
+  animate();
+};
+mainLoader();
 
 // CONTROL KEYS
 const keysPressed = {};
@@ -391,8 +408,7 @@ document.addEventListener(
       } else if (event.key == "n") {
         // space
         characterControls.switchBackToggle();
-      }
-      else if (event.key == "q") {
+      } else if (event.key == "q") {
         // space
         characterControls.switchFinishToggle();
       }
