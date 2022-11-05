@@ -97,7 +97,7 @@ export class CharacterControls {
       play = "walking";
     } else {
       if (this.toggleJump) {
-        play = "jump";
+        play = "jumping";
       } else {
         play = "idle";
       }
@@ -258,7 +258,7 @@ export class CharacterControls {
       }
     }
 
-    if (this.currentAction == "jump") {
+    if (this.currentAction == "jumping") {
       this.mixer.update(delta * 1.4);
       // diagonal movement angle offset
       var directionOffset = this.directionOffset(keysPressed);
