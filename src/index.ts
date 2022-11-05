@@ -40,7 +40,7 @@ light();
 
 // MODEL WITH ANIMATIONS
 var characterControls: CharacterControls;
-new GLTFLoader().load("models/FallGuys3.glb", function (gltf) {
+new GLTFLoader().load("models/RunGuys.glb", function (gltf) {
   const model = gltf.scene;
   model.traverse(function (object: any) {
     if (object.isMesh) object.castShadow = true;
@@ -396,6 +396,7 @@ const keyDisplayQueue = new KeyDisplay();
 document.addEventListener(
   "keydown",
   (event) => {
+    characterControls.startFlag = true;
     console.log(event.key);
     keyDisplayQueue.down(event.key);
     if (event.shiftKey && characterControls) {

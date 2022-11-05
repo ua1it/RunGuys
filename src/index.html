@@ -34,6 +34,7 @@
                         clearInterval(animate);
                         document.getElementById("loading").style.display ="none";    
                         document.getElementById("youWIN").style.display = "none";
+                        document.getElementById("timerBox").style.display = "none";
                     }
                 };
                 var animate = setInterval(function() {
@@ -62,6 +63,9 @@
         </div>
         <div id = "youWIN">
           <p id = "youWinText">You Finished The Race!</p>
+        </div>
+        <div id='timerBox' class="timerBox">
+          <div id="time" class="time">00:00:00</div>
         </div>
         <script src = "index.js">
         </script>

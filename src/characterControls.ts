@@ -14,6 +14,8 @@ export class CharacterControls {
   toggleJump: boolean = false;
   toggleBack: boolean = false;
   toggleFinish: boolean = false;
+  finishFlag: boolean = false;
+  startFlag: boolean = false;
   currentAction: string;
 
   // temporary data
@@ -28,6 +30,11 @@ export class CharacterControls {
   walkVelocity = 3;
   jumpTime = 0;
   backTime = 0;
+
+  time = 0;
+  hour = 0;
+  min = 0;
+  sec = 0;
 
   constructor(
     model: THREE.Group,
@@ -74,8 +81,36 @@ export class CharacterControls {
   public switchFinishToggle() {
     this.toggleFinish = !this.toggleFinish;
   }
-
   public update(delta: number, keysPressed: any) {
+    if (this.startFlag && !this.finishFlag) {
+      setInterval(function () {
+        this.time++;
+
+        this.min = Math.floor(this.time / 60);
+        this.hour = Math.floor(this.min / 60);
+        this.sec = this.time % 60;
+        this.min = this.min % 60;
+
+        var th = this.hour;
+        var tm = this.min;
+        var ts = this.sec;
+        if (th < 10) {
+          th = "0" + this.hour;
+        }
+        if (tm < 10) {
+          tm = "0" + this.min;
+        }
+        if (ts < 10) {
+          ts = "0" + this.sec;
+        }
+
+        document.getElementById("time").innerHTML = th + ":" + tm + ":" + ts;
+      }, 1000);
+    } else {
+      // this.startFlag=true
+      // document.getElementById("timerBox").style.display = "block";
+    }
+
     const directionPressed = DIRECTIONS.some((key) => keysPressed[key] == true);
     // available animation
     // falling
@@ -86,20 +121,24 @@ export class CharacterControls {
     // jump
     //console.log(this.toggleFinish);
     var play = "";
-    if (this.toggleBack) {
-      play = "backward";
-    } else if (directionPressed && this.toggleRun && !this.toggleJump) {
-      play = "running";
-    } else if (this.toggleFinish) {
-      play = "Cheering";
-    } else if (directionPressed && !this.toggleJump) {
-      play = "walking";
-    } else {
-      if (this.toggleJump) {
-        play = "jump";
+    if (!this.finishFlag) {
+      if (this.toggleBack) {
+        play = "backward";
+      } else if (directionPressed && this.toggleRun && !this.toggleJump) {
+        play = "running";
+      } else if (this.toggleFinish) {
+        play = "dancing";
+      } else if (directionPressed && !this.toggleJump) {
+        play = "walking";
       } else {
-        play = "idle";
+        if (this.toggleJump) {
+          play = "jumping";
+        } else {
+          play = "idle";
+        }
       }
+    } else {
+      play = "dancing";
     }
 
     if (this.currentAction != play) {
@@ -114,7 +153,10 @@ export class CharacterControls {
 
     this.mixer.update(delta * 1.4);
 
-    if (this.currentAction == "running" || this.currentAction == "walking") {
+    if (
+      (this.currentAction == "running" || this.currentAction == "walking") &&
+      !this.finishFlag
+    ) {
       if (this.model.position.y >= 0.08) {
         this.model.position.y -= 0.02;
       }
@@ -391,10 +433,11 @@ export class CharacterControls {
 
         // z가 210보다 높고 x가 -8.4부터 8.4사이가 결승선
         if (
-          this.model.position.z >= 210.5 &&
+          this.model.position.z >= 200.5 &&
           this.model.position.x <= 8.4 &&
           this.model.position.x >= -8.4
         ) {
+          this.toggleFinish = true;
           document.getElementById("youWIN").style.display = "block";
           // alert("GAME IS OVER");
         }
@@ -407,7 +450,7 @@ export class CharacterControls {
       }
     }
 
-    if (this.currentAction == "jump") {
+    if (this.currentAction == "jumping") {
       this.mixer.update(delta * 1.4);
       // diagonal movement angle offset
       var directionOffset = this.directionOffset(keysPressed);
@@ -467,6 +510,16 @@ export class CharacterControls {
       this.updateCameraTarget(moveX, moveZ, this.currentAction);
     }
     if (this.currentAction == "finish") {
+      var directionOffset = Math.PI;
+
+      // rotate model
+      this.rotateQuarternion.setFromAxisAngle(
+        this.rotateAngle,
+        directionOffset
+      );
+      this.model.quaternion.rotateTowards(this.rotateQuarternion, 0.2);
+      this.model.rotateY(180);
+      this.finishFlag = true;
       console.log("finish");
     }
   }
@@ -486,7 +539,7 @@ export class CharacterControls {
       this.cameraTarget.x = this.model.position.x;
       this.cameraTarget.z = this.model.position.z;
       this.orbitControl.target = this.cameraTarget;
-    } else if (Action == "jump") {
+    } else if (Action == "jumping") {
       // move camera
       if (this.jumpTime >= 20) {
         this.camera.position.y = this.camera.position.y + 0.08;
