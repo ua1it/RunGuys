@@ -379,6 +379,7 @@ const keyDisplayQueue = new KeyDisplay();
 document.addEventListener(
   "keydown",
   (event) => {
+    characterControls.startFlag = true;
     console.log(event.key);
     keyDisplayQueue.down(event.key);
     if (event.shiftKey && characterControls) {
