@@ -16,6 +16,16 @@
       }
     </style>
         <script>
+            function startMusic(){
+              const audioContainer = document.querySelector('#bgm');
+              audioContainer.loop = true;
+              audioContainer.play()
+            }
+            // function winMusic(){
+            //   const audioContainer = document.querySelector('#winBgm');
+            //   audioContainer.loop = true;
+            //   audioContainer.play()
+            // }
           $(document).ready(function() {
             if(!Modernizr.meter){
               alert('Sorry your brower does not support HTML5 progress bar');
@@ -35,6 +45,7 @@
                         document.getElementById("loading").style.display ="none";    
                         document.getElementById("youWIN").style.display = "none";
                         document.getElementById("timerBox").style.display = "none";
+                        startMusic();
                     }
                 };
                 var animate = setInterval(function() {
@@ -61,12 +72,18 @@
           201835509 임인범<br>
           201835531 조연겸<br> -->
         </div>
-        <div id = "youWIN">
-          <p id = "youWinText">You Finished The Race!</p>
+        <div id = "youWIN" class = 'line'>
+          <p id = "youWinText" class = 'pop-outin'>You Finished The Race!</p>
         </div>
         <div id='timerBox' class="timerBox">
           <div id="time" class="time">00:00:00</div>
         </div>
+        <audio id = "bgm">
+          <source id = "bgmSource" src = "models/music/1 - Everybody Falls (Fall Guys Theme).mp3"/>
+        </audio>
+        <!-- <audio id = "winBgm">
+          <source id = 'winBgmSource' src = "models/music/6 - Didn't Fall! (You Win).mp3"/>
+        </audio> -->
         <script src = "index.js">
         </script>
       </div>
