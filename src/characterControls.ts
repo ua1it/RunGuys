@@ -469,7 +469,7 @@ export class CharacterControls {
       if (this.jumpTime >= 30) {
         this.model.position.x += moveX;
         this.model.position.z += moveZ;
-        this.model.position.y -= 0.092;
+        this.model.position.y -= 0.097;
         this.jumpTime += 1;
         if (this.jumpTime == 60) {
           this.jumpTime = 0;
